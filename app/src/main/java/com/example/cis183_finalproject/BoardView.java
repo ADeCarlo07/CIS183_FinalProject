@@ -29,6 +29,7 @@ public class BoardView extends View
 
     private Board board;
 
+    private OnCellClickListener listener;
 
 
     public BoardView(Context context, AttributeSet attrs)
@@ -72,6 +73,11 @@ public class BoardView extends View
         }
     }
 
+    public void setOnCellClickListener(OnCellClickListener l)
+    {
+        this.listener = l;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -88,22 +94,9 @@ public class BoardView extends View
             if (row >= 0 && row < 8 && col >= 0 && col < 8)
             {
                 Cell cell = board.getCell(row, col);
-                if (cell.containsPiece())
+                if (listener != null)
                 {
-                    Log.d("BoardView", "User clicked on piece at: " + row + ", " + col);
-
-                    if (cell.getPiece().getColor() == "Dark")
-                    {
-                        Log.d("BoardView", "User clicked on bot's piece");
-                    }
-                    else
-                    {
-                        board.setSelectedPiece(row, col);
-                    }
-                }
-                else
-                {
-                    Log.d("BoardView", "Clicked empty cell at: " + row + ", " + col);
+                    listener.onCellClicked(row, col);
                 }
             }
         }
@@ -117,10 +110,10 @@ public class BoardView extends View
     {
         if (canvas == null) return;
 
-        float chessBoardSide = Math.min(getWidth(), getHeight()) * scaleFactor;
-        cellSide = chessBoardSide / 8f;
-        originX = (getWidth() - chessBoardSide) / 2f;
-        originY = (getHeight() - chessBoardSide) / 2f;
+        float boardSide = Math.min(getWidth(), getHeight()) * scaleFactor;
+        cellSide = boardSide / 8f;
+        originX = (getWidth() - boardSide) / 2f;
+        originY = (getHeight() - boardSide) / 2f;
 
         drawBoard(canvas);
 

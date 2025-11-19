@@ -23,12 +23,15 @@ public class Board
         return cells[row][col];
     }
 
+
+
     public void placePiece(int row, int col, Piece piece)
     {
         Cell cell = getCell(row, col);
         if (cell != null)
         {
             cell.placePiece(piece);
+            piece.setCell(cell);
         }
     }
 
@@ -58,6 +61,7 @@ public class Board
             Piece piece = from.getPiece();
             from.removePiece();
             to.placePiece(piece);
+            piece.setCell(to);
         }
     }
 }

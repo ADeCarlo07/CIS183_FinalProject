@@ -22,6 +22,7 @@ public class Cell
     public void placePiece(Piece p)
     {
         piece = p;
+        piece.setCell(this);
     }
 
     public void removePiece()
@@ -39,5 +40,6 @@ public class Cell
         {
             return false;
         }
+
     }
 }
