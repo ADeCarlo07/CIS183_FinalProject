@@ -644,6 +644,116 @@ public class Game extends AppCompatActivity
         }
     }
 
+    private void intermediateDifficultyBotTurn()
+    {
+        botPieces.clear();
+
+        if (playerTurn)
+        {
+            return;
+        }
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                Cell cell = board.getCell(row, col);
+                if (cell.containsPiece())
+                {
+                    Piece piece = cell.getPiece();
+                    if (piece.getColor().equals("Dark"))
+                    {
+                        botPieces.add(piece);
+                    }
+                }
+            }
+        }
+
+        if (botPieces != null)
+        {
+            int rightCellRow = -1;
+            int rightCellCol = -1;
+            Cell rightCell;
+
+            int leftCellRow = -1;
+            int leftCellCol = -1;
+            Cell leftCell;
+
+            int rightCellRowCapture = -1;
+            int rightCellColCapture = -1;
+            Cell rightCellCapture;
+
+            int leftCellRowCapture = -1;
+            int leftCellColCapture = -1;
+            Cell leftCellCapture;
+
+            //2 row and 2 col away
+            int rightCellRowUpperCapture = -1;
+            int rightCellColUpperCapture = -1;
+            Cell rightCellUpperCapture;
+            int leftCellRowUpperCapture = -1;
+            int leftCellColUpperCapture = -1;
+            Cell leftCellUpperCapture;
+
+            //1 row and 1 col away
+            int rightCellRowUpper = -1;
+            int rightCellColUpper = -1;
+            Cell rightCellUpper;
+            int leftCellRowUpper = -1;
+            int leftCellColUpper = -1;
+            Cell leftCellUpper;
+
+            Collections.shuffle(botPieces);
+
+            for(Piece botPiece : botPieces)
+            {
+                if (!botPiece.isCrowned())
+                {
+
+                    //LOWER
+                    //2 rows and 2 cols away
+                    rightCellRowCapture = botPiece.getCell().getRow() + 2;
+                    rightCellColCapture = botPiece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+
+                    leftCellRowCapture = botPiece.getCell().getRow() + 2;
+                    leftCellColCapture = botPiece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
+
+                    //1 row and 1 col away
+                    rightCellRow = botPiece.getCell().getRow() + 1;
+                    rightCellCol = botPiece.getCell().getCol() + 1;
+                    rightCell = board.getCell(rightCellRow, rightCellCol);
+
+                    leftCellRow = botPiece.getCell().getRow() + 1;
+                    leftCellCol = botPiece.getCell().getCol() - 1;
+                    leftCell = board.getCell(leftCellRow, leftCellCol);
+
+                    //piece, from, to
+                    boolean canMoveLeft = false;
+                    boolean canCaptureAndMoveLeft = false;
+                    boolean canMoveRight = false;
+                    boolean canCaptureAndMoveRight = false;
+
+                    if (leftCell != null)
+                    {
+                        canMoveLeft = canPieceMove(botPiece, botPiece.getCell(), leftCell);
+                    }
+
+                    if (leftCellCapture != null)
+                    {
+                        canCaptureAndMoveLeft = canCapturePiece(botPiece, leftCellCapture);
+                    }
+
+
+                }
+            }
+
+        }
+
+    }
+
     private void easyDifficultyBotTurn()
     {
         botPieces.clear();
@@ -669,7 +779,7 @@ public class Game extends AppCompatActivity
             }
         }
 
-        if (botPieces != null && botTurn)
+        if (botPieces != null)
         {
             int rightCellRow = -1;
             int rightCellCol = -1;
@@ -687,104 +797,72 @@ public class Game extends AppCompatActivity
             int leftCellColCapture = -1;
             Cell leftCellCapture;
 
+            //2 row and 2 col away
+            int rightCellRowUpperCapture = -1;
+            int rightCellColUpperCapture = -1;
+            Cell rightCellUpperCapture;
+            int leftCellRowUpperCapture = -1;
+            int leftCellColUpperCapture = -1;
+            Cell leftCellUpperCapture;
+
+            //1 row and 1 col away
+            int rightCellRowUpper = -1;
+            int rightCellColUpper = -1;
+            Cell rightCellUpper;
+            int leftCellRowUpper = -1;
+            int leftCellColUpper = -1;
+            Cell leftCellUpper;
+
             //boolean canCapture = false;
 
             Collections.shuffle(botPieces);
 
             for(Piece botPiece : botPieces)
             {
-                //2 rows and 2 cols away
-                rightCellRowCapture = botPiece.getCell().getRow() + 2;
-                rightCellColCapture = botPiece.getCell().getCol() + 2;
-                rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
-
-                leftCellRowCapture = botPiece.getCell().getRow() + 2;
-                leftCellColCapture = botPiece.getCell().getCol() - 2;
-                leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
-
-
-                //1 row and 1 col away
-                rightCellRow = botPiece.getCell().getRow() + 1;
-                rightCellCol = botPiece.getCell().getCol() + 1;
-                rightCell = board.getCell(rightCellRow, rightCellCol);
-
-                leftCellRow = botPiece.getCell().getRow() + 1;
-                leftCellCol = botPiece.getCell().getCol() - 1;
-                leftCell = board.getCell(leftCellRow, leftCellCol);
-
-                //piece, from, to
-                boolean canMoveLeft = false;
-                boolean canCaptureAndMoveLeft = false;
-                boolean canMoveRight = false;
-                boolean canCaptureAndMoveRight = false;
-                if (leftCell != null)
-                {
-                    canMoveLeft = canPieceMove(botPiece, botPiece.getCell(), leftCell);
-                }
-
-                if (leftCellCapture != null)
-                {
-                    canCaptureAndMoveLeft = canCapturePiece(botPiece, leftCellCapture);
-                }
-
-                if (canCaptureAndMoveLeft)
+                if (!botPiece.isCrowned())
                 {
 
-                    botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
+                    //LOWER
+                    //2 rows and 2 cols away
+                    rightCellRowCapture = botPiece.getCell().getRow() + 2;
+                    rightCellColCapture = botPiece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
 
-                    Cell finalLeftCellCapture = leftCellCapture;
-                    botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                    leftCellRowCapture = botPiece.getCell().getRow() + 2;
+                    leftCellColCapture = botPiece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
+
+                    //1 row and 1 col away
+                    rightCellRow = botPiece.getCell().getRow() + 1;
+                    rightCellCol = botPiece.getCell().getCol() + 1;
+                    rightCell = board.getCell(rightCellRow, rightCellCol);
+
+                    leftCellRow = botPiece.getCell().getRow() + 1;
+                    leftCellCol = botPiece.getCell().getCol() - 1;
+                    leftCell = board.getCell(leftCellRow, leftCellCol);
+
+                    //piece, from, to
+                    boolean canMoveLeft = false;
+                    boolean canCaptureAndMoveLeft = false;
+                    boolean canMoveRight = false;
+                    boolean canCaptureAndMoveRight = false;
+                    if (leftCell != null)
                     {
-                        @Override
-                        public void onAnimationEnd(Animator animation)
-                        {
-                            Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
-                            //Update board state AFTER animation completes
-                            board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
-
-                            if (capturedPiece != null)
-                            {
-                                capturedPiece.getCell().removePiece();
-                                capturedPiece = null;
-                            }
-
-                            bv.invalidate();
-
-                            playerTurn = true;
-                            botTurn = false;
-
-
-                        }
-                    });
-
-                    //canCapture = true;
-                    //Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
-                    //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), leftCellCapture.getRow(), leftCellCapture.getCol());
-                    //capturedPiece.getCell().removePiece();
-                    //capturedPiece = null;
-
-                    //bv.invalidate();
-
-                    //Easy bot will not do chained captures
-                    //No more captures, end turn
-                    //playerTurn = true;
-                    //botTurn = false;
-                    return;
-
-                }
-                else
-                {
-                    if (rightCellCapture != null)
-                    {
-                        canCaptureAndMoveRight = canCapturePiece(botPiece, rightCellCapture);
+                        canMoveLeft = canPieceMove(botPiece, botPiece.getCell(), leftCell);
                     }
 
-                    if (canCaptureAndMoveRight)
+                    if (leftCellCapture != null)
                     {
-                        botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
+                        canCaptureAndMoveLeft = canCapturePiece(botPiece, leftCellCapture);
+                    }
 
-                        Cell finalRightCellCapture = rightCellCapture;
+                    if (canCaptureAndMoveLeft)
+                    {
 
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
+
+                        Cell finalLeftCellCapture = leftCellCapture;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                         {
                             @Override
@@ -792,12 +870,17 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                 if (capturedPiece != null)
                                 {
                                     capturedPiece.getCell().removePiece();
                                     capturedPiece = null;
+                                }
+
+                                if (crownPiece(botPiece) && !botPiece.isCrowned())
+                                {
+                                    botPiece.makeCrowned();
                                 }
 
                                 bv.invalidate();
@@ -809,44 +892,112 @@ public class Game extends AppCompatActivity
                             }
                         });
 
-
-                        //canCapture = true;
-                        //Log.d("Game: ", "BOT attempting to capture right at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
-                        //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), rightCellCapture.getRow(), rightCellCapture.getCol());
-                        //capturedPiece.getCell().removePiece();
-                        //capturedPiece = null;
-
-                        //bv.invalidate();
-
-                        //Easy bot will not do chained captures
-                        //No more captures, end turn
-                        //playerTurn = true;
-                        //botTurn = false;
                         return;
+
+                    }
+                    else
+                    {
+                        if (rightCellCapture != null)
+                        {
+                            canCaptureAndMoveRight = canCapturePiece(botPiece, rightCellCapture);
+                        }
+
+                        if (canCaptureAndMoveRight)
+                        {
+                            botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
+
+                            Cell finalRightCellCapture = rightCellCapture;
+
+                            botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                            {
+                                @Override
+                                public void onAnimationEnd(Animator animation)
+                                {
+                                    Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                                    //Update board state AFTER animation completes
+                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+
+                                    if (capturedPiece != null)
+                                    {
+                                        capturedPiece.getCell().removePiece();
+                                        capturedPiece = null;
+                                    }
+
+                                    if (crownPiece(botPiece) && !botPiece.isCrowned())
+                                    {
+                                        botPiece.makeCrowned();
+                                    }
+
+                                    bv.invalidate();
+
+                                    playerTurn = true;
+                                    botTurn = false;
+
+
+                                }
+                            });
+
+                            return;
+                        }
+
                     }
 
-                }
-
-                if (!canMoveLeft)
-                {
-                    if (rightCell != null)
+                    if (!canMoveLeft)
                     {
-                        canMoveRight = canPieceMove(botPiece, botPiece.getCell(), rightCell);
+                        if (rightCell != null)
+                        {
+                            canMoveRight = canPieceMove(botPiece, botPiece.getCell(), rightCell);
+                        }
+
+                        if (canMoveRight)
+                        {
+                            botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
+
+                            Cell finalRightCell = rightCell;
+                            botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                            {
+                                @Override
+                                public void onAnimationEnd(Animator animation)
+                                {
+                                    Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
+                                    //Update board state AFTER animation completes
+                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+
+                                    if (crownPiece(botPiece) && !botPiece.isCrowned())
+                                    {
+                                        botPiece.makeCrowned();
+                                    }
+
+                                    bv.invalidate();
+
+                                    playerTurn = true;
+                                    botTurn = false;
+
+
+                                }
+                            });
+
+                            return;
+                        }
                     }
-
-                    if (canMoveRight)
+                    else
                     {
-                        botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
-                        Cell finalRightCell = rightCell;
+                        Cell finalLeftCell = leftCell;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                         {
                             @Override
                             public void onAnimationEnd(Animator animation)
                             {
-                                Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
+                                Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+
+                                if (crownPiece(botPiece) && !botPiece.isCrowned())
+                                {
+                                    botPiece.makeCrowned();
+                                }
 
                                 bv.invalidate();
 
@@ -857,59 +1008,343 @@ public class Game extends AppCompatActivity
                             }
                         });
 
-
-
-                        //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), rightCell.getRow(), rightCell.getCol());
-
-                        //bv.invalidate();
-
-                        //playerTurn = true;
-                        //botTurn = false;
                         return;
                     }
                 }
                 else
                 {
-                    botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
+                    //UPPER
+                    //2 row and 2 col away
+                    rightCellRowUpperCapture = botPiece.getCell().getRow() - 2;
+                    rightCellColUpperCapture = botPiece.getCell().getCol() + 2;
+                    rightCellUpperCapture = board.getCell(rightCellRowUpperCapture, rightCellColUpperCapture);
+                    leftCellRowUpperCapture = botPiece.getCell().getRow() - 2;
+                    leftCellColUpperCapture = botPiece.getCell().getCol() - 2;
+                    leftCellUpperCapture = board.getCell(leftCellRowUpperCapture, leftCellColUpperCapture);
 
-                    Cell finalLeftCell = leftCell;
-                    botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                    //1 row and 1 col away
+                    rightCellRowUpper = botPiece.getCell().getRow() - 1;
+                    rightCellColUpper = botPiece.getCell().getCol() + 1;
+                    rightCellUpper = board.getCell(rightCellRowUpper, rightCellColUpper);
+                    leftCellRowUpper = botPiece.getCell().getRow() - 1;
+                    leftCellColUpper = botPiece.getCell().getCol() - 1;
+                    leftCellUpper = board.getCell(leftCellRowUpper, leftCellColUpper);
+
+                    //LOWER
+                    //2 rows and 2 cols away
+                    rightCellRowCapture = botPiece.getCell().getRow() + 2;
+                    rightCellColCapture = botPiece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+
+                    leftCellRowCapture = botPiece.getCell().getRow() + 2;
+                    leftCellColCapture = botPiece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
+
+                    //1 row and 1 col away
+                    rightCellRow = botPiece.getCell().getRow() + 1;
+                    rightCellCol = botPiece.getCell().getCol() + 1;
+                    rightCell = board.getCell(rightCellRow, rightCellCol);
+
+                    leftCellRow = botPiece.getCell().getRow() + 1;
+                    leftCellCol = botPiece.getCell().getCol() - 1;
+                    leftCell = board.getCell(leftCellRow, leftCellCol);
+
+                    //piece, from, to
+                    boolean canMoveLeft = false;
+                    boolean canMoveLeftUp = false;
+                    boolean canCaptureAndMoveLeft = false;
+                    boolean canCaptureAndMoveLeftUp = false;
+                    boolean canMoveRight = false;
+                    boolean canMoveRightUp = false;
+                    boolean canCaptureAndMoveRight = false;
+                    boolean canCaptureAndMoveRightUp = false;
+
+                    if (leftCell != null)
                     {
-                        @Override
-                        public void onAnimationEnd(Animator animation)
+                        canMoveLeft = canPieceMove(botPiece, botPiece.getCell(), leftCell);
+                    }
+
+                    if (leftCellUpper != null)
+                    {
+                        canMoveLeftUp = canPieceMove(botPiece, botPiece.getCell(), leftCellUpper);
+                    }
+
+                    if (leftCellCapture != null)
+                    {
+                        canCaptureAndMoveLeft = canCapturePiece(botPiece, leftCellCapture);
+                    }
+
+                    if (leftCellUpperCapture != null)
+                    {
+                        canCaptureAndMoveLeftUp = canCapturePiece(botPiece, leftCellUpperCapture);
+                    }
+
+                    if (canCaptureAndMoveLeft)
+                    {
+
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
+
+                        Cell finalLeftCellCapture = leftCellCapture;
+                        botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                         {
-                            Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
-                            //Update board state AFTER animation completes
-                            board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                                //Update board state AFTER animation completes
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
-                            bv.invalidate();
+                                if (capturedPiece != null)
+                                {
+                                    capturedPiece.getCell().removePiece();
+                                    capturedPiece = null;
+                                }
 
-                            playerTurn = true;
-                            botTurn = false;
+
+                                bv.invalidate();
+
+                                playerTurn = true;
+                                botTurn = false;
 
 
+                            }
+                        });
+
+                        return;
+
+                    }
+                    else if (canCaptureAndMoveLeftUp)
+                    {
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpperCapture, bv);
+
+                        Cell finalLeftCellUpperCapture = leftCellUpperCapture;
+                        botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                                //Update board state AFTER animation completes
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
+
+                                if (capturedPiece != null)
+                                {
+                                    capturedPiece.getCell().removePiece();
+                                    capturedPiece = null;
+                                }
+
+
+
+                                bv.invalidate();
+
+                                playerTurn = true;
+                                botTurn = false;
+
+
+                            }
+                        });
+
+                        return;
+                    }
+                    else
+                    {
+                        if (rightCellCapture != null)
+                        {
+                            canCaptureAndMoveRight = canCapturePiece(botPiece, rightCellCapture);
                         }
-                    });
+
+                        if (rightCellUpperCapture != null)
+                        {
+                            canCaptureAndMoveRightUp = canCapturePiece(botPiece, rightCellUpperCapture);
+                        }
+
+                        if (canCaptureAndMoveRight)
+                        {
+                            botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
+
+                            Cell finalRightCellCapture = rightCellCapture;
+
+                            botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                            {
+                                @Override
+                                public void onAnimationEnd(Animator animation)
+                                {
+                                    Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                                    //Update board state AFTER animation completes
+                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+
+                                    if (capturedPiece != null)
+                                    {
+                                        capturedPiece.getCell().removePiece();
+                                        capturedPiece = null;
+                                    }
+
+                                    bv.invalidate();
+
+                                    playerTurn = true;
+                                    botTurn = false;
 
 
-                    //Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + leftCell.getRow() + "," + leftCell.getCol());
+                                }
+                            });
 
-                    //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), leftCell.getRow(), leftCell.getCol());
+                            return;
+                        }
+                        else if (canCaptureAndMoveRightUp)
+                        {
+                            botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpperCapture, bv);
 
-                    //bv.invalidate();
+                            Cell finalRightCellUpperCapture = rightCellUpperCapture;
+                            botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                            {
+                                @Override
+                                public void onAnimationEnd(Animator animation)
+                                {
+                                    Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                                    //Update board state AFTER animation completes
+                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
 
-                    //playerTurn = true;
-                    //botTurn = false;
-                    return;
+
+
+                                    bv.invalidate();
+
+                                    playerTurn = true;
+                                    botTurn = false;
+
+
+                                }
+                            });
+
+                            return;
+                        }
+
+                    }
+
+                    if (!canMoveLeft)
+                    {
+                        if (rightCell != null)
+                        {
+                            canMoveRight = canPieceMove(botPiece, botPiece.getCell(), rightCell);
+                        }
+
+                        if (rightCellUpper != null)
+                        {
+                            canMoveRightUp = canPieceMove(botPiece, botPiece.getCell(), rightCellUpper);
+                        }
+
+                        if (canMoveRight)
+                        {
+                            botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
+
+                            Cell finalRightCell = rightCell;
+                            botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                            {
+                                @Override
+                                public void onAnimationEnd(Animator animation)
+                                {
+                                    Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
+                                    //Update board state AFTER animation completes
+                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+
+
+                                    bv.invalidate();
+
+                                    playerTurn = true;
+                                    botTurn = false;
+
+
+                                }
+                            });
+
+                            return;
+                        }
+                        else if (canMoveRightUp)
+                        {
+                            botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpper, bv);
+
+                            Cell finalRightCellUpper = rightCellUpper;
+                            botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                            {
+                                @Override
+                                public void onAnimationEnd(Animator animation)
+                                {
+                                    Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCellUpper.getRow() + "," + finalRightCellUpper.getCol());
+                                    //Update board state AFTER animation completes
+                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
+
+
+                                    bv.invalidate();
+
+                                    playerTurn = true;
+                                    botTurn = false;
+
+
+                                }
+                            });
+
+                            return;
+                        }
+                    }
+                    else if (canMoveLeftUp)
+                    {
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpper, bv);
+
+                        Cell finalLeftCellUpper = leftCellUpper;
+                        botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCellUpper.getRow() + "," + finalLeftCellUpper.getCol());
+                                //Update board state AFTER animation completes
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
+
+
+                                bv.invalidate();
+
+                                playerTurn = true;
+                                botTurn = false;
+
+
+                            }
+                        });
+
+                        return;
+                    }
+                    else
+                    {
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
+
+                        Cell finalLeftCell = leftCell;
+                        botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
+                                //Update board state AFTER animation completes
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+
+
+                                bv.invalidate();
+
+                                playerTurn = true;
+                                botTurn = false;
+
+
+                            }
+                        });
+
+                        return;
+                    }
+
                 }
+
             }
         }
     }
 
-    private void intermediateDifficultyBotTurn()
-    {
-
-    }
 
 
     private void onSelectedPiece()
@@ -960,6 +1395,11 @@ public class Game extends AppCompatActivity
                                             //Update board state AFTER animation completes
                                             board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
 
+                                            if (crownPiece(currentPiece) && !currentPiece.isCrowned())
+                                            {
+                                                currentPiece.makeCrowned();
+                                            }
+
                                             bv.invalidate();
 
                                             playerTurn = true;
@@ -997,7 +1437,10 @@ public class Game extends AppCompatActivity
                                             }
                                             else
                                             {
-
+                                                if (crownPiece(currentPiece) && !currentPiece.isCrowned())
+                                                {
+                                                    currentPiece.makeCrowned();
+                                                }
 
                                                 //No more captures, end turn
                                                 from = null;
@@ -1035,6 +1478,10 @@ public class Game extends AppCompatActivity
                                             board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
                                             Log.d("Game: ", "moved from: " + from.getRow() + "," + from.getCol() + ", to: " + to.getRow() + "," + to.getCol());
 
+                                            if (crownPiece(currentPiece) && !currentPiece.isCrowned())
+                                            {
+                                                currentPiece.makeCrowned();
+                                            }
 
                                             from = null;
                                             to = null;
@@ -1070,6 +1517,7 @@ public class Game extends AppCompatActivity
 
                     }
                 }
+
 
                 //logBoardForDebugging();
             }
