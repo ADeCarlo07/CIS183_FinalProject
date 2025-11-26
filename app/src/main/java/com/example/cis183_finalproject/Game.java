@@ -1,5 +1,9 @@
 package com.example.cis183_finalproject;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
@@ -11,6 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Random;
 
 public class Game extends AppCompatActivity
 {
@@ -24,7 +33,13 @@ public class Game extends AppCompatActivity
 
     boolean playerTurn = true;
 
+    boolean botTurn = false;
+
     Piece capturedPiece = null;
+
+    ArrayList<Piece> botPieces;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,10 +53,13 @@ public class Game extends AppCompatActivity
             return insets;
         });
 
+        botPieces = new ArrayList<Piece>();
+
         bv = findViewById(R.id.boardView);
         board = bv.getBoard();
 
         onSelectedPiece();
+
     }
 
     private boolean canPieceMove(Piece piece, Cell from, Cell to)
@@ -208,28 +226,8 @@ public class Game extends AppCompatActivity
                 leftContainsPiece = true;
             }
 
-            if (leftCellPiece != null && leftCellPiece.containsPiece())
-            {
-                String color = piece.getColor();
-                String otherColor = "";
 
-                if (color.equals("Light"))
-                {
-                    otherColor = "Dark";
-                }
-
-                if (color.equals("Dark"))
-                {
-                    otherColor = "Light";
-                }
-
-                if (leftCellPiece.getPiece().getColor().equals(otherColor))
-                {
-                    piecesTouchingLeft = true;
-                }
-
-            }
-
+            //check opponent piece in between
             if (rightCellPiece != null && rightCellPiece.containsPiece())
             {
                 String color = piece.getColor();
@@ -249,7 +247,27 @@ public class Game extends AppCompatActivity
                 {
                     piecesTouchingRight = true;
                 }
+            }
 
+            if (leftCellPiece != null && leftCellPiece.containsPiece())
+            {
+                String color = piece.getColor();
+                String otherColor = "";
+
+                if (color.equals("Light"))
+                {
+                    otherColor = "Dark";
+                }
+
+                if (color.equals("Dark"))
+                {
+                    otherColor = "Light";
+                }
+
+                if (leftCellPiece.getPiece().getColor().equals(otherColor))
+                {
+                    piecesTouchingLeft = true;
+                }
             }
 
             if(!leftContainsPiece && piecesTouchingLeft)
@@ -257,7 +275,7 @@ public class Game extends AppCompatActivity
                 leftSpecial = true;
                 canCapture = true;
             }
-            else if(!rightContainsPiece && piecesTouchingRight)
+            if(!rightContainsPiece && piecesTouchingRight)
             {
                 rightSpecial = true;
                 canCapture = true;
@@ -266,6 +284,10 @@ public class Game extends AppCompatActivity
             //actual movement
             if (canCapture)
             {
+
+
+
+
                 if (leftCell != null && !leftCell.containsPiece() && leftCellPiece != null && leftCellPiece.containsPiece())
                 {
                     if (to == leftCell && leftSpecial)
@@ -298,6 +320,7 @@ public class Game extends AppCompatActivity
             }
             else
             {
+                Log.d("Game:" , "tried to capture but couldn't");
                 return false;
             }
         }
@@ -480,17 +503,17 @@ public class Game extends AppCompatActivity
                 leftSpecial = true;
                 canCapture = true;
             }
-            else if(!rightContainsPiece && piecesTouchingRight)
+            if(!rightContainsPiece && piecesTouchingRight)
             {
                 rightSpecial = true;
                 canCapture = true;
             }
-            else if(!lowerRightContainsPiece && lowerPiecesTouchingRight)
+            if(!lowerRightContainsPiece && lowerPiecesTouchingRight)
             {
                 lowerRightSpecial = true;
                 canCapture = true;
             }
-            else if(!lowerLeftContainsPiece && lowerPiecesTouchingLeft)
+            if(!lowerLeftContainsPiece && lowerPiecesTouchingLeft)
             {
                 lowerLeftSpecial = true;
                 canCapture = true;
@@ -563,11 +586,330 @@ public class Game extends AppCompatActivity
     }
 
 
-    private boolean crownPiece(Piece piece, Cell to)
+    private boolean crownPiece(Piece piece)
     {
-        return false;
+        if (piece.isCrowned())
+        {
+            return false;
+        }
+
+        String color = piece.getColor();
+
+        if (color.equals("Light"))
+        {
+            //    0   1   2   3   4   5   6   7   <-- column numbers
+            //   +---+---+---+---+---+---+---+---+
+            //0  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //1  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //2  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //3  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //4  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //5  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //6  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //7  |   |   |   |   |   |   |   |   |
+            //   +---+---+---+---+---+---+---+---+
+            //      ^ row numbers on the left
+
+            if (piece.getCell().getRow() == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        else if (color.equals("Dark"))
+        {
+            if (piece.getCell().getRow() == 7)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
+    private void easyDifficultyBotTurn()
+    {
+        botPieces.clear();
+
+        if (playerTurn)
+        {
+            return;
+        }
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                Cell cell = board.getCell(row, col);
+                if (cell.containsPiece())
+                {
+                    Piece piece = cell.getPiece();
+                    if (piece.getColor().equals("Dark"))
+                    {
+                        botPieces.add(piece);
+                    }
+                }
+            }
+        }
+
+        if (botPieces != null && botTurn)
+        {
+            int rightCellRow = -1;
+            int rightCellCol = -1;
+            Cell rightCell;
+
+            int leftCellRow = -1;
+            int leftCellCol = -1;
+            Cell leftCell;
+
+            int rightCellRowCapture = -1;
+            int rightCellColCapture = -1;
+            Cell rightCellCapture;
+
+            int leftCellRowCapture = -1;
+            int leftCellColCapture = -1;
+            Cell leftCellCapture;
+
+            //boolean canCapture = false;
+
+            Collections.shuffle(botPieces);
+
+            for(Piece botPiece : botPieces)
+            {
+                //2 rows and 2 cols away
+                rightCellRowCapture = botPiece.getCell().getRow() + 2;
+                rightCellColCapture = botPiece.getCell().getCol() + 2;
+                rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+
+                leftCellRowCapture = botPiece.getCell().getRow() + 2;
+                leftCellColCapture = botPiece.getCell().getCol() - 2;
+                leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
+
+                //1 row and 1 col away
+                rightCellRow = botPiece.getCell().getRow() + 1;
+                rightCellCol = botPiece.getCell().getCol() + 1;
+                rightCell = board.getCell(rightCellRow, rightCellCol);
+
+                leftCellRow = botPiece.getCell().getRow() + 1;
+                leftCellCol = botPiece.getCell().getCol() - 1;
+                leftCell = board.getCell(leftCellRow, leftCellCol);
+
+                //piece, from, to
+                boolean canMoveLeft = false;
+                boolean canCaptureAndMoveLeft = false;
+                boolean canMoveRight = false;
+                boolean canCaptureAndMoveRight = false;
+                if (leftCell != null)
+                {
+                    canMoveLeft = canPieceMove(botPiece, botPiece.getCell(), leftCell);
+                }
+
+                if (leftCellCapture != null)
+                {
+                    canCaptureAndMoveLeft = canCapturePiece(botPiece, leftCellCapture);
+                }
+
+                if (canCaptureAndMoveLeft)
+                {
+
+                    botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
+
+                    Cell finalLeftCellCapture = leftCellCapture;
+                    botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                    {
+                        @Override
+                        public void onAnimationEnd(Animator animation)
+                        {
+                            Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                            //Update board state AFTER animation completes
+                            board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+
+                            if (capturedPiece != null)
+                            {
+                                capturedPiece.getCell().removePiece();
+                                capturedPiece = null;
+                            }
+
+                            bv.invalidate();
+
+                            playerTurn = true;
+                            botTurn = false;
+
+
+                        }
+                    });
+
+                    //canCapture = true;
+                    //Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                    //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), leftCellCapture.getRow(), leftCellCapture.getCol());
+                    //capturedPiece.getCell().removePiece();
+                    //capturedPiece = null;
+
+                    //bv.invalidate();
+
+                    //Easy bot will not do chained captures
+                    //No more captures, end turn
+                    //playerTurn = true;
+                    //botTurn = false;
+                    return;
+
+                }
+                else
+                {
+                    if (rightCellCapture != null)
+                    {
+                        canCaptureAndMoveRight = canCapturePiece(botPiece, rightCellCapture);
+                    }
+
+                    if (canCaptureAndMoveRight)
+                    {
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
+
+                        Cell finalRightCellCapture = rightCellCapture;
+
+                        botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                                //Update board state AFTER animation completes
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+
+                                if (capturedPiece != null)
+                                {
+                                    capturedPiece.getCell().removePiece();
+                                    capturedPiece = null;
+                                }
+
+                                bv.invalidate();
+
+                                playerTurn = true;
+                                botTurn = false;
+
+
+                            }
+                        });
+
+
+                        //canCapture = true;
+                        //Log.d("Game: ", "BOT attempting to capture right at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
+                        //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), rightCellCapture.getRow(), rightCellCapture.getCol());
+                        //capturedPiece.getCell().removePiece();
+                        //capturedPiece = null;
+
+                        //bv.invalidate();
+
+                        //Easy bot will not do chained captures
+                        //No more captures, end turn
+                        //playerTurn = true;
+                        //botTurn = false;
+                        return;
+                    }
+
+                }
+
+                if (!canMoveLeft)
+                {
+                    if (rightCell != null)
+                    {
+                        canMoveRight = canPieceMove(botPiece, botPiece.getCell(), rightCell);
+                    }
+
+                    if (canMoveRight)
+                    {
+                        botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
+
+                        Cell finalRightCell = rightCell;
+                        botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                        {
+                            @Override
+                            public void onAnimationEnd(Animator animation)
+                            {
+                                Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
+                                //Update board state AFTER animation completes
+                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+
+                                bv.invalidate();
+
+                                playerTurn = true;
+                                botTurn = false;
+
+
+                            }
+                        });
+
+
+
+                        //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), rightCell.getRow(), rightCell.getCol());
+
+                        //bv.invalidate();
+
+                        //playerTurn = true;
+                        //botTurn = false;
+                        return;
+                    }
+                }
+                else
+                {
+                    botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
+
+                    Cell finalLeftCell = leftCell;
+                    botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                    {
+                        @Override
+                        public void onAnimationEnd(Animator animation)
+                        {
+                            Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
+                            //Update board state AFTER animation completes
+                            board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+
+                            bv.invalidate();
+
+                            playerTurn = true;
+                            botTurn = false;
+
+
+                        }
+                    });
+
+
+                    //Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + leftCell.getRow() + "," + leftCell.getCol());
+
+                    //board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), leftCell.getRow(), leftCell.getCol());
+
+                    //bv.invalidate();
+
+                    //playerTurn = true;
+                    //botTurn = false;
+                    return;
+                }
+            }
+        }
+    }
+
+    private void intermediateDifficultyBotTurn()
+    {
+
+    }
 
 
     private void onSelectedPiece()
@@ -577,99 +919,237 @@ public class Game extends AppCompatActivity
             @Override
             public void onCellClicked(int row, int col)
             {
+
                 bv.invalidate();
                 Cell cell = board.getCell(row, col);
 
-                if (!canSelectMoveCell)
+                if (playerTurn)
                 {
-                    if (cell.containsPiece())
+                    if (!canSelectMoveCell)
                     {
-                        currentPiece = cell.getPiece();
-                        from = cell;
-                        canSelectMoveCell = true;
-                        Log.d("Game", "Selected piece at: " + from.getRow() + "," + from.getCol());
-                    }
-                    return;
-                }
-                else
-                {
-                    try
-                    {
-                        to = cell;
-                        if (from != null && currentPiece != null && to != null)
+
+                        if (cell.containsPiece() && cell.getPiece().getColor().equals("Light"))
                         {
-                            boolean canMove = canPieceMove(currentPiece, from, to);
-                            boolean canCaptureAndMove = canCapturePiece(currentPiece, to);
-
-                            if (canCaptureAndMove && capturedPiece != null)
+                            currentPiece = cell.getPiece();
+                            from = cell;
+                            canSelectMoveCell = true;
+                            Log.d("Game", "Selected piece at: " + from.getRow() + "," + from.getCol());
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            to = cell;
+                            if (from != null && currentPiece != null && to != null)
                             {
-                                Log.d("Game: ", "attempting to capture");
-                                board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
-                                capturedPiece.getCell().removePiece();
-                                capturedPiece = null;
+                                boolean canMove = canPieceMove(currentPiece, from, to);
+                                boolean canCaptureAndMove = canCapturePiece(currentPiece, to);
 
-                                bv.invalidate();
-
-                                // Keep piece selected at new location
-                                from = to;
-                                currentPiece = from.getPiece();
-                                canSelectMoveCell = true; // still waiting for next destination
-
-                                // Check if another capture is possible
-                                if (canCapturePiece(currentPiece, from))
+                                if (canCaptureAndMove && capturedPiece != null)
                                 {
-                                    Log.d("Game", "Another capture available!");
-                                    // Do NOT reset state — wait for next click
-                                    playerTurn = true;
+                                    currentPiece.animatePiece(currentPiece, from, to, bv);
+
+                                    currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                                    {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation)
+                                        {
+                                            Log.d("Game: ", "attempting to capture");
+                                            //Update board state AFTER animation completes
+                                            board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+
+                                            bv.invalidate();
+
+                                            playerTurn = true;
+                                            botTurn = false;
+
+                                            board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+                                            capturedPiece.getCell().removePiece();
+                                            capturedPiece = null;
+
+                                            bv.invalidate();
+
+                                            //Keep piece selected at new location
+                                            from = to;
+                                            currentPiece = from.getPiece();
+
+
+
+                                            ArrayList<Cell> possibleCells = isAnotherCaptureAvailable(currentPiece);
+
+                                            if (!possibleCells.isEmpty())
+                                            {
+                                                for(Cell pCell : possibleCells)
+                                                {
+                                                    if (canCapturePiece(currentPiece, pCell))
+                                                    {
+                                                        canSelectMoveCell = true;
+                                                        Log.d("Game", "Another capture available!");
+                                                        playerTurn = true;
+                                                        botTurn = false;
+
+
+                                                    }
+
+                                                }
+                                            }
+                                            else
+                                            {
+
+
+                                                //No more captures, end turn
+                                                from = null;
+                                                currentPiece = null;
+                                                canSelectMoveCell = false;
+                                                playerTurn = false;
+                                                botTurn = true;
+
+
+
+                                                easyDifficultyBotTurn();
+
+                                            }
+
+                                        }
+                                    });
+
+
+
+                                    return;
+
+
+                                }
+
+                                if (canMove)
+                                {
+                                    currentPiece.animatePiece(currentPiece, from, to, bv);
+
+                                    currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                                    {
+                                        @Override
+                                        public void onAnimationEnd(Animator animation)
+                                        {
+                                            //public void movePiece(int fromRow, int fromCol, int toRow, int toCol)
+                                            board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+                                            Log.d("Game: ", "moved from: " + from.getRow() + "," + from.getCol() + ", to: " + to.getRow() + "," + to.getCol());
+
+
+                                            from = null;
+                                            to = null;
+                                            currentPiece = null;
+                                            canSelectMoveCell = false;
+                                            bv.invalidate();
+                                            playerTurn = false;
+                                            botTurn = true;
+
+
+
+                                            easyDifficultyBotTurn();
+                                        }
+                                    });
+
                                 }
                                 else
                                 {
-                                    // No more captures, end turn
                                     from = null;
+                                    to = null;
                                     currentPiece = null;
                                     canSelectMoveCell = false;
-                                    playerTurn = false;
+                                    playerTurn = true;
+
                                 }
-                                return;
-
-                            }
-
-                            if (canMove)
-                            {
-                                //public void movePiece(int fromRow, int fromCol, int toRow, int toCol)
-                                board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
-                                Log.d("Game: ", "moved from: " + from.getRow() + "," + from.getCol() + ", to: " + to.getRow() + "," + to.getCol());
-
-                                from = null;
-                                to = null;
-                                currentPiece = null;
-                                canSelectMoveCell = false;
-                                bv.invalidate();
-                                playerTurn = false;
-                            }
-                            else
-                            {
-                                from = null;
-                                to = null;
-                                currentPiece = null;
-                                canSelectMoveCell = false;
                             }
                         }
-                    }
-                    catch (NullPointerException np)
-                    {
-                        Log.d("Game: ", "error " + np);
-                    }
+                        catch (NullPointerException np)
+                        {
+                            Log.d("Game: ", "error " + np);
+                        }
 
 
+                    }
                 }
 
+                //logBoardForDebugging();
             }
         });
     }
 
+    private void logBoardForDebugging()
+    {
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                Cell cell = board.getCell(row, col);
+                Log.d("Game Board:", "Cell " + row + "," + col + " contains piece? " + cell.containsPiece());
+            }
+        }
+    }
 
 
+    private ArrayList<Cell> isAnotherCaptureAvailable(Piece piece)
+    {
+        int rightCellRow = -1;
+        int rightCellCol = -1;
+        Cell rightCell;
+        int leftCellRow = -1;
+        int leftCellCol = -1;
+        Cell leftCell;
+
+        ArrayList<Cell> cells = new ArrayList<Cell>();
+
+        if (piece.getColor().equals("Light"))
+        {
+            //2 row and 2 col away
+            rightCellRow = piece.getCell().getRow() - 2;
+            rightCellCol = piece.getCell().getCol() + 2;
+            rightCell = board.getCell(rightCellRow, rightCellCol);
+            leftCellRow = piece.getCell().getRow() - 2;
+            leftCellCol = piece.getCell().getCol() - 2;
+            leftCell = board.getCell(leftCellRow, leftCellCol);
+
+
+        }
+        else
+        {
+            //2 rows and 2 cols away
+            rightCellRow = piece.getCell().getRow() + 2;
+            rightCellCol = piece.getCell().getCol() + 2;
+             rightCell = board.getCell(rightCellRow, rightCellCol);
+
+            leftCellRow = piece.getCell().getRow() + 2;
+            leftCellCol = piece.getCell().getCol() - 2;
+            leftCell = board.getCell(leftCellRow, leftCellCol);
+
+
+        }
+
+        boolean canCaptureLeft = false;
+        boolean canCaptureRight = false;
+        if (leftCell != null)
+        {
+            canCaptureLeft = canCapturePiece(piece, leftCell);
+        }
+
+        if (rightCell != null)
+        {
+            canCaptureRight = canCapturePiece(piece, rightCell);
+        }
+
+        if (canCaptureLeft)
+        {
+            cells.add(leftCell);
+        }
+        if (canCaptureRight)
+        {
+            cells.add(rightCell);
+        }
+
+
+        return cells;
+    }
 
 
 

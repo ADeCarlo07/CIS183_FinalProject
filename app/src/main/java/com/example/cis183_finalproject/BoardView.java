@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,6 +32,9 @@ public class BoardView extends View
 
     private OnCellClickListener listener;
 
+    public float getCellSide() { return cellSide; }
+    public float getOriginX()  { return originX; }
+    public float getOriginY()  { return originY; }
 
     public BoardView(Context context, AttributeSet attrs)
     {
@@ -122,13 +126,22 @@ public class BoardView extends View
 
     private void drawBoard(Canvas canvas)
     {
+        //First draw all squares
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+                boolean isDark = (col + row) % 2 == 1;
+                drawSquareAt(canvas, col, row, isDark);
+            }
+        }
+
+        //Then draw all pieces on top
         for (int row = 0; row < 8; row++)
         {
             for (int col = 0; col < 8; col++)
             {
                 Cell cell = board.getCell(row, col);
-                boolean isDark = (col + row) % 2 == 1;
-                drawSquareAt(canvas, col, row, isDark);
                 if (cell.containsPiece())
                 {
                     drawPieceAt(canvas, col, row, cell.getPiece());
@@ -174,6 +187,22 @@ public class BoardView extends View
             {
                 bmp = lightPiece;
             }
+        }
+
+        //If the piece has an animated centerPoint, use it
+        Point center = piece.getCenterPoint();
+
+        if (center != null)
+        {
+            //centerPoint is the CENTER of the piece
+            left = center.x - cellSide / 2f;
+            top  = center.y - cellSide / 2f;
+        }
+        else
+        {
+            //fallback to cell origin
+            left = originX + col * cellSide;
+            top  = originY + row * cellSide;
         }
 
         //Scale to fit cell
