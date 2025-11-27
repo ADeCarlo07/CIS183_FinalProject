@@ -1546,9 +1546,18 @@ public class Game extends AppCompatActivity
         int leftCellCol = -1;
         Cell leftCell;
 
+        //LOWER
+        //2 row and 2 col away
+        int lowerRightCellRow = -1;
+        int lowerRightCellCol = -1;
+        Cell lowerRightCell = null;
+        int lowerLeftCellRow = -1;
+        int lowerLeftCellCol = -1;
+        Cell lowerLeftCell = null;
+
         ArrayList<Cell> cells = new ArrayList<Cell>();
 
-        if (piece.getColor().equals("Light"))
+        if (piece.getColor().equals("Light") && !piece.isCrowned())
         {
             //2 row and 2 col away
             rightCellRow = piece.getCell().getRow() - 2;
@@ -1560,46 +1569,123 @@ public class Game extends AppCompatActivity
 
 
         }
-        else
+        else if (piece.getColor().equals("Dark") && !piece.isCrowned())
         {
             //2 rows and 2 cols away
             rightCellRow = piece.getCell().getRow() + 2;
             rightCellCol = piece.getCell().getCol() + 2;
-             rightCell = board.getCell(rightCellRow, rightCellCol);
+            rightCell = board.getCell(rightCellRow, rightCellCol);
 
             leftCellRow = piece.getCell().getRow() + 2;
             leftCellCol = piece.getCell().getCol() - 2;
             leftCell = board.getCell(leftCellRow, leftCellCol);
-
-
         }
-
-        boolean canCaptureLeft = false;
-        boolean canCaptureRight = false;
-        if (leftCell != null)
+        else
         {
-            canCaptureLeft = canCapturePiece(piece, leftCell);
+            //LOWER
+            //2 row and 2 col away
+            lowerRightCellRow = piece.getCell().getRow() + 2;
+            lowerRightCellCol = piece.getCell().getCol() + 2;
+            lowerRightCell = board.getCell(lowerRightCellRow, lowerRightCellCol);
+            lowerLeftCellRow = piece.getCell().getRow() + 2;
+            lowerLeftCellCol = piece.getCell().getCol() - 2;
+            lowerLeftCell = board.getCell(lowerLeftCellRow, lowerLeftCellCol);
+
+            //UPPER
+            //2 row and 2 col away
+            rightCellRow = piece.getCell().getRow() - 2;
+            rightCellCol = piece.getCell().getCol() + 2;
+            rightCell = board.getCell(rightCellRow, rightCellCol);
+            leftCellRow = piece.getCell().getRow() - 2;
+            leftCellCol = piece.getCell().getCol() - 2;
+            leftCell = board.getCell(leftCellRow, leftCellCol);
+
         }
 
-        if (rightCell != null)
+
+        if (piece.isCrowned())
         {
-            canCaptureRight = canCapturePiece(piece, rightCell);
-        }
+            boolean canCaptureLeftUp = false;
+            boolean canCaptureRightUp = false;
+            boolean canCaptureRightDown = false;
+            boolean canCaptureLeftDown = false;
 
-        if (canCaptureLeft)
+            if (leftCell != null)
+            {
+                canCaptureLeftUp = canCapturePiece(piece, leftCell);
+            }
+
+            if (rightCell != null)
+            {
+                canCaptureRightUp = canCapturePiece(piece, rightCell);
+            }
+
+            if (lowerRightCell != null)
+            {
+                canCaptureRightDown = canCapturePiece(piece, lowerRightCell);
+            }
+
+            if (lowerLeftCell != null)
+            {
+                canCaptureLeftDown = canCapturePiece(piece, lowerLeftCell);
+            }
+
+            if (canCaptureLeftUp)
+            {
+                cells.add(leftCell);
+            }
+            if (canCaptureRightUp)
+            {
+                cells.add(rightCell);
+            }
+
+            if (canCaptureLeftDown)
+            {
+                cells.add(lowerLeftCell);
+            }
+
+            if (canCaptureRightDown)
+            {
+                cells.add(lowerRightCell);
+            }
+
+            return cells;
+        }
+        else
         {
-            cells.add(leftCell);
-        }
-        if (canCaptureRight)
-        {
-            cells.add(rightCell);
-        }
+            boolean canCaptureLeft = false;
+            boolean canCaptureRight = false;
+            if (leftCell != null)
+            {
+                canCaptureLeft = canCapturePiece(piece, leftCell);
+            }
+
+            if (rightCell != null)
+            {
+                canCaptureRight = canCapturePiece(piece, rightCell);
+            }
+
+            if (canCaptureLeft)
+            {
+                cells.add(leftCell);
+            }
+            if (canCaptureRight)
+            {
+                cells.add(rightCell);
+            }
 
 
-        return cells;
+            return cells;
+        }
+
     }
 
 
+    //Problem with bot capturing piece at 4,3 when bot was crowned and my piece was crowned, tried to get a normal piece, didnt get deleted, next turn jumped over same piece again and my piece got deleted?.
+    //LOG: 13:36:52.327 11655-11655 Game:                   com.example.cis183_finalproject      D  moved from: 5,2, to: 4,3
+    //2025-11-27 13:36:52.794 11655-11655 Game:                   com.example.cis183_finalproject      D  BOT attempting to capture left at 4,3
+    //Piece didn't get deleted and wrong piece might've? Hard to tell.
+    //Didn't see any errors
 
 
 
