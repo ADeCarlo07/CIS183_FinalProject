@@ -52,7 +52,7 @@ public class BoardView extends View
 
     private void setupInitialPieces()
     {
-        //Example: place dark pieces on rows 0–2, light pieces on rows 5–7
+        //Example: place dark pieces on rows 0-2, light pieces on rows 5-7
         for (int row = 0; row < 3; row++)
         {
             for (int col = 0; col < 8; col++)

@@ -19,7 +19,10 @@ public class Board
 
     public Cell getCell(int row, int col)
     {
-        if (row < 0 || row >= 8 || col < 0 || col >= 8) return null;
+        if (row < 0 || row >= 8 || col < 0 || col >= 8)
+        {
+            return null;
+        }
         return cells[row][col];
     }
 
