@@ -6,6 +6,7 @@ public class SessionData
     private static Match selectedMatch;
     private static User selectedUser;
     public static boolean cantEditOrDeleteAccount;
+    public static boolean easyModeSelected;
 
     public static User getSignedInUser()
     {

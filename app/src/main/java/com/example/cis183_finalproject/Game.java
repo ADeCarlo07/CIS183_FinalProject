@@ -3,12 +3,15 @@ package com.example.cis183_finalproject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +42,16 @@ public class Game extends AppCompatActivity
 
     ArrayList<Piece> botPieces;
 
+    ArrayList<Move> matchMoves;
+
+    ImageButton img_j_backArrow;
+
+    TextView tv_j_username;
+
+    TextView tv_j_userTurn;
+    TextView tv_j_captureAlert;
+
+
 
 
     @Override
@@ -53,13 +66,37 @@ public class Game extends AppCompatActivity
             return insets;
         });
 
+        matchMoves = new ArrayList<>();
+
         botPieces = new ArrayList<Piece>();
 
         bv = findViewById(R.id.boardView);
         board = bv.getBoard();
 
+        tv_j_username = findViewById(R.id.tv_v_game_username);
+        tv_j_userTurn = findViewById(R.id.tv_v_game_turnAlert);
+        tv_j_captureAlert = findViewById(R.id.tv_v_game_captureAlert);
+        img_j_backArrow = findViewById(R.id.img_v_game_backArrow);
+
         onSelectedPiece();
 
+        tv_j_username.setText(SessionData.getSignedInUser().getUsername());
+
+        buttonClickListener();
+
+    }
+
+    private void buttonClickListener()
+    {
+        img_j_backArrow.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                SessionData.easyModeSelected = false;
+                startActivity(new Intent(Game.this, HomePage.class));
+            }
+        });
     }
 
     private boolean canPieceMove(Piece piece, Cell from, Cell to)
@@ -885,6 +922,8 @@ public class Game extends AppCompatActivity
 
                                 bv.invalidate();
 
+
+                                tv_j_userTurn.setVisibility(View.VISIBLE);
                                 playerTurn = true;
                                 botTurn = false;
 
@@ -930,6 +969,8 @@ public class Game extends AppCompatActivity
 
                                     bv.invalidate();
 
+                                    tv_j_userTurn.setVisibility(View.VISIBLE);
+
                                     playerTurn = true;
                                     botTurn = false;
 
@@ -970,6 +1011,8 @@ public class Game extends AppCompatActivity
 
                                     bv.invalidate();
 
+                                    tv_j_userTurn.setVisibility(View.VISIBLE);
+
                                     playerTurn = true;
                                     botTurn = false;
 
@@ -1000,6 +1043,8 @@ public class Game extends AppCompatActivity
                                 }
 
                                 bv.invalidate();
+
+                                tv_j_userTurn.setVisibility(View.VISIBLE);
 
                                 playerTurn = true;
                                 botTurn = false;
@@ -1104,6 +1149,8 @@ public class Game extends AppCompatActivity
 
                                 bv.invalidate();
 
+                                tv_j_userTurn.setVisibility(View.VISIBLE);
+
                                 playerTurn = true;
                                 botTurn = false;
 
@@ -1137,6 +1184,8 @@ public class Game extends AppCompatActivity
 
 
                                 bv.invalidate();
+
+                                tv_j_userTurn.setVisibility(View.VISIBLE);
 
                                 playerTurn = true;
                                 botTurn = false;
@@ -1182,6 +1231,8 @@ public class Game extends AppCompatActivity
 
                                     bv.invalidate();
 
+                                    tv_j_userTurn.setVisibility(View.VISIBLE);
+
                                     playerTurn = true;
                                     botTurn = false;
 
@@ -1208,6 +1259,8 @@ public class Game extends AppCompatActivity
 
 
                                     bv.invalidate();
+
+                                    tv_j_userTurn.setVisibility(View.VISIBLE);
 
                                     playerTurn = true;
                                     botTurn = false;
@@ -1250,6 +1303,8 @@ public class Game extends AppCompatActivity
 
                                     bv.invalidate();
 
+                                    tv_j_userTurn.setVisibility(View.VISIBLE);
+
                                     playerTurn = true;
                                     botTurn = false;
 
@@ -1275,6 +1330,8 @@ public class Game extends AppCompatActivity
 
 
                                     bv.invalidate();
+
+                                    tv_j_userTurn.setVisibility(View.VISIBLE);
 
                                     playerTurn = true;
                                     botTurn = false;
@@ -1303,6 +1360,8 @@ public class Game extends AppCompatActivity
 
                                 bv.invalidate();
 
+                                tv_j_userTurn.setVisibility(View.VISIBLE);
+
                                 playerTurn = true;
                                 botTurn = false;
 
@@ -1328,6 +1387,8 @@ public class Game extends AppCompatActivity
 
 
                                 bv.invalidate();
+
+                                tv_j_userTurn.setVisibility(View.VISIBLE);
 
                                 playerTurn = true;
                                 botTurn = false;
@@ -1425,6 +1486,7 @@ public class Game extends AppCompatActivity
                                                 {
                                                     if (canCapturePiece(currentPiece, pCell))
                                                     {
+                                                        tv_j_captureAlert.setVisibility(View.VISIBLE);
                                                         canSelectMoveCell = true;
                                                         Log.d("Game", "Another capture available!");
                                                         playerTurn = true;
@@ -1449,6 +1511,8 @@ public class Game extends AppCompatActivity
                                                 playerTurn = false;
                                                 botTurn = true;
 
+                                                tv_j_userTurn.setVisibility(View.INVISIBLE);
+                                                tv_j_captureAlert.setVisibility(View.INVISIBLE);
 
 
                                                 easyDifficultyBotTurn();
@@ -1490,6 +1554,9 @@ public class Game extends AppCompatActivity
                                             bv.invalidate();
                                             playerTurn = false;
                                             botTurn = true;
+
+                                            tv_j_userTurn.setVisibility(View.INVISIBLE);
+                                            tv_j_captureAlert.setVisibility(View.INVISIBLE);
 
 
 

@@ -1,5 +1,83 @@
-<com.example.cis183_finalproject.BoardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/boardView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#341E1F" />
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <com.example.cis183_finalproject.BoardView
+        android:id="@+id/boardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#341E1F"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView24"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BOT"
+        android:textColor="#f7e8ca"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/boardView" />
+
+    <TextView
+        android:id="@+id/tv_v_game_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="USER"
+        android:textColor="#f7e8ca"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/img_v_game_backArrow"
+        android:layout_width="73dp"
+        android:layout_height="61dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back Arrow"
+        android:rotation="180"
+        android:scaleType="fitCenter"
+        android:src="@drawable/light_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_v_game_turnAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="19dp"
+        android:text="It is your turn!"
+        android:textColor="#f7e8ca"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/tv_v_game_captureAlert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_v_game_captureAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="23dp"
+        android:text="Another capture is available!"
+        android:textColor="#f7e8ca"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/tv_v_game_username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="invisible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

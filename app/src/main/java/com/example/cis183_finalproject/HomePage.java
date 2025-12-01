@@ -90,7 +90,8 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                SessionData.easyModeSelected = true;
+                startActivity(new Intent(HomePage.this, Game.class));
             }
         });
 
@@ -99,7 +100,7 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                SessionData.easyModeSelected = false;
             }
         });
     }
