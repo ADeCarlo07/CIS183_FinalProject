@@ -2,7 +2,9 @@ package com.example.cis183_finalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -62,6 +64,18 @@ public class Leaderboard extends AppCompatActivity
             public void onClick(View v)
             {
                 startActivity(new Intent(Leaderboard.this, HomePage.class));
+            }
+        });
+
+        lv_j_leaderboard.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                SessionData.cantEditOrDeleteAccount = true;
+                User userSelected = listOfUsers.get(position);
+                SessionData.setSelectedUser(userSelected);
+                startActivity(new Intent(Leaderboard.this, Profile.class));
             }
         });
     }

@@ -71,6 +71,7 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+                SessionData.cantEditOrDeleteAccount = false;
                 startActivity(new Intent(HomePage.this, Profile.class));
             }
         });

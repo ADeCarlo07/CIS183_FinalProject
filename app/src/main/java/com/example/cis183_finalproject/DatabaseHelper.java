@@ -8,21 +8,23 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper
+{
     private static final String database_name = "CheckersInfo.db";
     private static final String users_table_name = "Users";
     private static final String matches_table_name = "Matches";
     private static final String moves_table_name = "Moves";
     private static final String difficulties_table_name = "Difficulties";
 
-    public DatabaseHelper(Context c) {
+    public DatabaseHelper(Context c)
+    {
         //we will use this to create the database
         //it accepts: the context, the name of the database, factory (leave null), and version number
         //If your database becomes corrupt or the information in the database is wrong
         //change the version number
         //super is used to call the functionality of the base class SQLiteOpenHelper and
         //then executes the extended (DatabaseHelper)
-        super(c, database_name, null, 2);
+        super(c, database_name, null, 7);
     }
 
     @Override
@@ -126,40 +128,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             SQLiteDatabase db = this.getWritableDatabase();
 
+
             //Match 1
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (1, 1, 3, 4, 2, 3, 6, 5, 7, 6);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (1, 2, 4, 5, 3, 4, 5, 6, 6, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (1, 3, 5, 6, 4, 5, 4, 7, 5, 8);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (1, 1, 2, 3, 1, 2, 5, 4, 6, 5);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (1, 2, 3, 4, 2, 3, 4, 5, 5, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (1, 3, 4, 5, 3, 4, 3, 6, 4, 7);");
 
             //Match 2
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (2, 1, 2, 2, 1, 1, 7, 7, 8, 8);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (2, 2, 3, 3, 2, 2, 6, 6, 7, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (2, 3, 4, 4, 3, 3, 5, 5, 6, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (2, 1, 2, 3, 1, 2, 5, 4, 6, 5);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (2, 2, 3, 4, 2, 3, 4, 3, 5, 4);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (2, 3, 4, 3, 3, 2, 2, 5, 3, 6);");
 
             //Match 3
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (3, 1, 6, 2, 5, 1, 2, 7, 1, 8);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (3, 2, 7, 3, 6, 2, 3, 6, 2, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (3, 3, 8, 4, 7, 3, 4, 5, 3, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (3, 1, 5, 1, 4, 0, 1, 6, 0, 7);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (3, 2, 6, 2, 5, 1, 2, 5, 1, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (3, 3, 7, 3, 6, 2, 3, 4, 2, 5);");
 
             //Match 4
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (4, 1, 4, 5, 3, 4, 5, 6, 6, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (4, 2, 5, 6, 4, 5, 4, 7, 5, 8);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (4, 3, 6, 7, 5, 6, 3, 8, 4, 7);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (4, 1, 3, 4, 2, 3, 4, 5, 5, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (4, 2, 4, 5, 3, 4, 3, 6, 4, 7);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (4, 3, 5, 6, 4, 5, 2, 7, 3, 6);");
 
             //Match 5
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (5, 1, 2, 3, 1, 2, 7, 6, 8, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (5, 2, 3, 4, 2, 3, 6, 5, 7, 6);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (5, 3, 4, 5, 3, 4, 5, 4, 6, 5);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (5, 1, 1, 2, 0, 1, 6, 5, 7, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (5, 2, 2, 3, 1, 2, 5, 4, 6, 5);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (5, 3, 3, 4, 2, 3, 4, 3, 5, 4);");
 
             //Match 6
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (6, 1, 5, 2, 4, 1, 3, 7, 2, 8);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (6, 2, 6, 3, 5, 2, 2, 6, 1, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (6, 3, 7, 4, 6, 3, 1, 5, 2, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (6, 1, 4, 1, 3, 0, 2, 6, 1, 7);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (6, 2, 5, 2, 4, 1, 1, 5, 0, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (6, 3, 6, 3, 5, 2, 0, 4, 1, 5);");
 
             //Match 7
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (7, 1, 8, 2, 7, 1, 2, 8, 1, 7);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (7, 2, 7, 3, 8, 2, 3, 7, 2, 6);");
-            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (7, 3, 6, 4, 7, 3, 4, 6, 3, 5);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (7, 1, 7, 1, 6, 0, 1, 7, 0, 6);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (7, 2, 6, 2, 7, 1, 2, 6, 1, 5);");
+            db.execSQL("INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES (7, 3, 5, 3, 6, 2, 3, 5, 2, 4);");
 
             db.close();
 
@@ -276,7 +279,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 selectedUser.setNumPoints(cursor.getInt(4));
 
 
-                SessionData.setSignedInUser(selectedUser);
+
+
+                if (SessionData.cantEditOrDeleteAccount)
+                {
+                    SessionData.setSelectedUser(selectedUser);
+                }
+                else
+                {
+                    SessionData.setSignedInUser(selectedUser);
+                }
             }
             else
             {
@@ -420,26 +432,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst())
         {
-            //we need a loop for this because we do not know how many students there is
-            do
-            {
-                //returned to us by the query
-                String username = cursor.getString(0);
-                int matchId = cursor.getInt(1);
-                String result = cursor.getString(2);
-                int difficultyId = cursor.getInt(3);
-                int time = cursor.getInt(4);
+            //returned to us by the query
+            String username = cursor.getString(0);
+            int matchId = cursor.getInt(1);
+            String result = cursor.getString(2);
+            int difficultyId = cursor.getInt(3);
+            int time = cursor.getInt(4);
 
-                Match match = new Match();
-                match.setUsername(username);
-                match.setId(matchId);
-                match.setResult(result);
-                match.setDifficultyId(difficultyId);
-                match.setTime(time);
+            Match match = new Match();
+            match.setUsername(username);
+            match.setId(matchId);
+            match.setResult(result);
+            match.setDifficultyId(difficultyId);
+            match.setTime(time);
 
-                SessionData.setSelectedMatch(match);
-            }
-            while (cursor.moveToNext());
+            SessionData.setSelectedMatch(match);
         }
 
         cursor.close();
@@ -451,7 +458,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Move> listOfMoves = new ArrayList<>();
 
-        String selectStatement = "SELECT turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB FROM " + moves_table_name + " WHERE matchId = " + matchId + ";";
+        String selectStatement = "SELECT turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB, moveId FROM " + moves_table_name + " WHERE matchId = " + matchId + ";";
 
         Cursor cursor = db.rawQuery(selectStatement, null);
 
@@ -462,25 +469,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             {
                 //returned to us by the query
                 int turnNumber = cursor.getInt(0);
-                int difficultyId = cursor.getInt(1);
-                int matchId = cursor.getInt(2);
+                int toSquareRowU = cursor.getInt(1);
+                int toSquareColU = cursor.getInt(2);
+                int fromSquareRowU = cursor.getInt(3);
+                int fromSquareColU = cursor.getInt(4);
+                int toSquareRowB = cursor.getInt(5);
+                int toSquareColB = cursor.getInt(6);
+                int fromSquareRowB = cursor.getInt(7);
+                int fromSquareColB = cursor.getInt(8);
+                int moveId = cursor.getInt(9);
 
-                Match match = new Match();
-                match.setResult(result);
-                match.setDifficultyId(difficultyId);
-                match.setId(matchId);
+                Move move = new Move();
+                move.setTurnNumber(turnNumber);
+                move.setToSquareRowU(toSquareRowU);
+                move.setToSquareColU(toSquareColU);
+                move.setFromSquareRowU(fromSquareRowU);
+                move.setFromSquareColU(fromSquareColU);
+                move.setToSquareRowB(toSquareRowB);
+                move.setToSquareColB(toSquareColB);
+                move.setFromSquareRowB(fromSquareRowB);
+                move.setFromSquareColB(fromSquareColB);
+                move.setMoveId(moveId);
 
-                listOfMatches.add(match);
+                listOfMoves.add(move);
             }
             while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
-        return listOfMatches;
+        return listOfMoves;
     }
 
+    public void updateUserData(User user)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String updateStatement = "UPDATE " + users_table_name + " SET fname = '" + user.getFname() + "', lname = '" + user.getLname() + "', email = '" + user.getEmail() +  "' WHERE username = '" + user.getUsername() +"';";
+        db.execSQL(updateStatement);
 
+        db.close();
+    }
+
+    public void deleteUserGivenUsername(String username)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String deleteStatement = "DELETE FROM " + users_table_name + " WHERE username = '" + username + "';";
+        db.execSQL(deleteStatement);
+        db.close();
+    }
 
 
 }

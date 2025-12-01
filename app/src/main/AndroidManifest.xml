@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CIS183_FinalProject">
         <activity
+            android:name=".UpdateUser"
+            android:exported="false" />
+        <activity
             android:name=".MatchInfo"
             android:exported="false" />
         <activity

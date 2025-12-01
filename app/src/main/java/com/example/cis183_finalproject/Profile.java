@@ -2,7 +2,10 @@ package com.example.cis183_finalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Profile extends AppCompatActivity
 {
@@ -58,30 +62,71 @@ public class Profile extends AppCompatActivity
         btn_j_update = findViewById(R.id.btn_v_profile_update);
         btn_j_delete = findViewById(R.id.btn_v_profile_delete);
 
+
+
         fillOutMatchesList();
         fillOutUserInformation();
         buttonClickListeners();
+
+        if (SessionData.cantEditOrDeleteAccount)
+        {
+            Log.d("SIGNED IN USER: ", SessionData.getSignedInUser().getUsername());
+            if (!SessionData.getSelectedUser().getUsername().equals(SessionData.getSignedInUser().getUsername()))
+            {
+                btn_j_delete.setVisibility(View.INVISIBLE);
+                btn_j_update.setVisibility(View.INVISIBLE);
+            }
+
+        }
     }
 
-    private void fillOutMatchesList()
-    {
-        listOfMatches = dbHelper.getAllMatchesGivenUsername(SessionData.getSignedInUser().getUsername());
+    private void fillOutMatchesList() {
+        if (!SessionData.cantEditOrDeleteAccount)
+        {
+            listOfMatches = dbHelper.getAllMatchesGivenUsername(SessionData.getSignedInUser().getUsername());
 
-        matchesListAdapter = new MatchesListAdapter(this, listOfMatches);
-        lv_j_matches.setAdapter(matchesListAdapter);
+            matchesListAdapter = new MatchesListAdapter(this, listOfMatches);
+            lv_j_matches.setAdapter(matchesListAdapter);
+        }
+        else
+        {
+            listOfMatches = dbHelper.getAllMatchesGivenUsername(SessionData.getSelectedUser().getUsername());
+
+            matchesListAdapter = new MatchesListAdapter(this, listOfMatches);
+            lv_j_matches.setAdapter(matchesListAdapter);
+        }
+
     }
 
     private void fillOutUserInformation()
     {
-        tv_j_username.setText(SessionData.getSignedInUser().getUsername());
-        tv_j_fname.setText(SessionData.getSignedInUser().getFname());
-        tv_j_lname.setText(SessionData.getSignedInUser().getLname());
-        tv_j_email.setText(SessionData.getSignedInUser().getEmail());
-        tv_j_points.setText(String.valueOf(SessionData.getSignedInUser().getNumPoints()));
+        if (!SessionData.cantEditOrDeleteAccount)
+        {
+            tv_j_username.setText(SessionData.getSignedInUser().getUsername());
+            tv_j_fname.setText(SessionData.getSignedInUser().getFname());
+            tv_j_lname.setText(SessionData.getSignedInUser().getLname());
+            tv_j_email.setText(SessionData.getSignedInUser().getEmail());
+            tv_j_points.setText(String.valueOf(SessionData.getSignedInUser().getNumPoints()));
 
-        int avgTime = dbHelper.getUsersAverageTimePerMatchGivenUsername(SessionData.getSignedInUser().getUsername());
+            int avgTime = dbHelper.getUsersAverageTimePerMatchGivenUsername(SessionData.getSignedInUser().getUsername());
 
-        tv_j_avgTime.setText(avgTime + " Seconds");
+            tv_j_avgTime.setText(avgTime + " Seconds");
+        }
+        else
+        {
+            dbHelper.getAllUserDataGivenUsername(SessionData.getSelectedUser().getUsername());
+
+            tv_j_username.setText(SessionData.getSelectedUser().getUsername());
+            tv_j_fname.setText(SessionData.getSelectedUser().getFname());
+            tv_j_lname.setText(SessionData.getSelectedUser().getLname());
+            tv_j_email.setText(SessionData.getSelectedUser().getEmail());
+            tv_j_points.setText(String.valueOf(SessionData.getSelectedUser().getNumPoints()));
+
+            int avgTime = dbHelper.getUsersAverageTimePerMatchGivenUsername(SessionData.getSelectedUser().getUsername());
+
+            tv_j_avgTime.setText(avgTime + " Seconds");
+        }
+
     }
 
     private void buttonClickListeners()
@@ -91,7 +136,8 @@ public class Profile extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                dbHelper.deleteUserGivenUsername(SessionData.getSignedInUser().getUsername());
+                startActivity(new Intent(Profile.this, MainActivity.class));
             }
         });
 
@@ -100,7 +146,7 @@ public class Profile extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-
+                startActivity(new Intent(Profile.this, UpdateUser.class));
             }
         });
 
@@ -109,7 +155,30 @@ public class Profile extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                startActivity(new Intent(Profile.this, HomePage.class));
+                if (SessionData.cantEditOrDeleteAccount)
+                {
+                    startActivity(new Intent(Profile.this, Leaderboard.class));
+                    SessionData.cantEditOrDeleteAccount = false;
+                }
+                else
+                {
+                    startActivity(new Intent(Profile.this, HomePage.class));
+                    SessionData.cantEditOrDeleteAccount = false;
+                }
+
+            }
+        });
+
+        lv_j_matches.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+
+                Match matchSelected = listOfMatches.get(position);
+                SessionData.setSelectedMatch(matchSelected);
+                Log.d("SessionData ", " Current matchId " + SessionData.getSelectedMatch().getId());
+                startActivity(new Intent(Profile.this, MatchInfo.class));
             }
         });
     }

@@ -8,38 +8,39 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
-        android:layout_width="211dp"
+        android:layout_width="206dp"
         android:layout_height="74dp"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="278dp"
+        android:layout_marginEnd="283dp"
         android:background="#744E52"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv__v_moves_cell_uFrom"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
         <TextView
             android:id="@+id/tv__v_moves_cell_bTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="28dp"
+            android:layout_marginEnd="28dp"
             android:layout_marginBottom="27dp"
             android:text="BTo"
             android:textColor="#f7e8ca"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_v_moves_arrow_light"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/img_v_moves_arrow_light"
             android:layout_width="42dp"
             android:layout_height="32dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="30dp"
             android:layout_marginBottom="22dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv__v_moves_cell_bFrom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/light_arrow" />
 
@@ -47,13 +48,15 @@
             android:id="@+id/tv__v_moves_cell_bFrom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="28dp"
-            android:layout_marginEnd="18dp"
+            android:layout_marginEnd="21dp"
             android:layout_marginBottom="27dp"
             android:text="BFrom"
             android:textColor="#f7e8ca"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/img_v_moves_arrow_light"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -82,6 +85,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -98,37 +102,41 @@
         android:id="@+id/tv__v_moves_cell_uTo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="27dp"
-        android:layout_marginBottom="26dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="25dp"
         android:text="UTo"
         android:textColor="#744E52"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintStart_toEndOf="@+id/img_v_moves_arrow"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <TextView
         android:id="@+id/tv__v_moves_cell_uFrom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
+        android:layout_marginStart="17dp"
         android:layout_marginTop="27dp"
+        android:layout_marginEnd="23dp"
         android:layout_marginBottom="26dp"
         android:text="UFrom"
         android:textColor="#744E52"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/img_v_moves_arrow"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/img_v_moves_arrow"
         android:layout_width="42dp"
         android:layout_height="32dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="25dp"
         android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv__v_moves_cell_uFrom"
+        app:layout_constraintEnd_toStartOf="@+id/constraintLayout2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
         app:srcCompat="@drawable/dark_arrow" />
 

@@ -66,7 +66,6 @@ public class LeaderboardListAdapter extends BaseAdapter
             view.setBackgroundColor(Color.parseColor("#482B2E"));
         }
 
-        //Get data for this pet from the listOfPets
         //we can access different elements based off the i value that is passed to this function
         User user = listOfUsers.get(position);
         tv_j_rank.setText("#" + rank);

@@ -4,6 +4,8 @@ public class SessionData
 {
     private static User signedInUser;
     private static Match selectedMatch;
+    private static User selectedUser;
+    public static boolean cantEditOrDeleteAccount;
 
     public static User getSignedInUser()
     {
@@ -25,5 +27,13 @@ public class SessionData
         SessionData.selectedMatch = match;
     }
 
+    public static User getSelectedUser()
+    {
+        return selectedUser;
+    }
 
+    public static void setSelectedUser(User selectedUser)
+    {
+        SessionData.selectedUser = selectedUser;
+    }
 }

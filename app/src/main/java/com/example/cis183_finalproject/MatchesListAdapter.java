@@ -60,8 +60,6 @@ public class MatchesListAdapter extends BaseAdapter
         tv_j_mode = view.findViewById(R.id.tv_v_matches_cell_mode);
 
 
-
-        //Get data for this pet from the listOfPets
         //we can access different elements based off the i value that is passed to this function
         Match match = listOfMatches.get(position);
         String difficultyName = dbHelper.getDifficultyNameGivenId(match.getDifficultyId());
