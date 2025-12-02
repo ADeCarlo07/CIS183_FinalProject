@@ -15,14 +15,18 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Game extends AppCompatActivity
 {
@@ -47,11 +51,28 @@ public class Game extends AppCompatActivity
     ImageButton img_j_backArrow;
 
     TextView tv_j_username;
-
+    TextView tv_j_timePassed;
     TextView tv_j_userTurn;
     TextView tv_j_captureAlert;
+    ConstraintLayout cons_j_gameOver;
+    TextView tv_j_result;
+    TextView tv_j_time;
+    TextView tv_j_numTurns;
 
+    Move currentMove;
 
+    boolean gameOver = false;
+
+    int turnCounter = 0;
+
+    Match currentMatch;
+
+    boolean userWon = false;
+    boolean botWon = false;
+
+    Timer timer;
+    TimerTask timerTask;
+    int time = 0;
 
 
     @Override
@@ -66,6 +87,10 @@ public class Game extends AppCompatActivity
             return insets;
         });
 
+        currentMove = new Move();
+        timer = new Timer();
+        howMuchTimeHasPassed();
+
         matchMoves = new ArrayList<>();
 
         botPieces = new ArrayList<Piece>();
@@ -76,7 +101,12 @@ public class Game extends AppCompatActivity
         tv_j_username = findViewById(R.id.tv_v_game_username);
         tv_j_userTurn = findViewById(R.id.tv_v_game_turnAlert);
         tv_j_captureAlert = findViewById(R.id.tv_v_game_captureAlert);
+        tv_j_timePassed = findViewById(R.id.tv_v_game_timePassed);
+        tv_j_time = findViewById(R.id.tv_v_game_time);
+        tv_j_numTurns = findViewById(R.id.tv_v_game_turns);
+        tv_j_result = findViewById(R.id.tv_v_game_result);
         img_j_backArrow = findViewById(R.id.img_v_game_backArrow);
+        cons_j_gameOver = findViewById(R.id.cons_v_game_gameOver);
 
         onSelectedPiece();
 
@@ -86,6 +116,40 @@ public class Game extends AppCompatActivity
 
     }
 
+    private void howMuchTimeHasPassed()
+    {
+        timerTask = new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        time++;
+                        tv_j_timePassed.setText(getTimerText());
+                    }
+                });
+
+            }
+        };
+
+        timer.schedule(timerTask, 0, 1000);
+    }
+
+    private String getTimerText()
+    {
+        int rounded = Math.round(time);
+
+        int seconds = ((rounded % 86400) % 3600) % 60;
+
+        String timerText = String.valueOf(seconds);
+
+        return timerText;
+    }
+
     private void buttonClickListener()
     {
         img_j_backArrow.setOnClickListener(new View.OnClickListener()
@@ -93,10 +157,15 @@ public class Game extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                SessionData.easyModeSelected = false;
-                startActivity(new Intent(Game.this, HomePage.class));
+                if (!gameOver)
+                {
+                    SessionData.easyModeSelected = false;
+                    startActivity(new Intent(Game.this, HomePage.class));
+                }
+
             }
         });
+
     }
 
     private boolean canPieceMove(Piece piece, Cell from, Cell to)
@@ -899,6 +968,15 @@ public class Game extends AppCompatActivity
 
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
 
+                        currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                        currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                        currentMove.setToSquareRowB(leftCellCapture.getRow());
+                        currentMove.setToSquareColB(leftCellCapture.getCol());
+                        currentMove.setTurnNumber(turnCounter);
+                        matchMoves.add(currentMove);
+
+                        currentMove = new Move();
+
                         Cell finalLeftCellCapture = leftCellCapture;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                         {
@@ -924,8 +1002,39 @@ public class Game extends AppCompatActivity
 
 
                                 tv_j_userTurn.setVisibility(View.VISIBLE);
+
+                                turnCounter++;
                                 playerTurn = true;
                                 botTurn = false;
+
+                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                if (isStuck || isStuckOther)
+                                {
+                                    timerTask.cancel();
+                                    tv_j_time.setText(getTimerText());
+                                    time = 0;
+
+                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                    String result = "";
+
+                                    if(botWon)
+                                    {
+                                        result = "Lost";
+                                    }
+                                    else
+                                    {
+                                        result = "Won";
+                                    }
+
+                                    tv_j_result.setText(result);
+                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                    gameOver = true;
+                                    Log.d("Game", "GAME OVER");
+                                }
 
 
                             }
@@ -944,6 +1053,15 @@ public class Game extends AppCompatActivity
                         if (canCaptureAndMoveRight)
                         {
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
+
+                            currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                            currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                            currentMove.setToSquareRowB(rightCellCapture.getRow());
+                            currentMove.setToSquareColB(rightCellCapture.getCol());
+                            currentMove.setTurnNumber(turnCounter);
+                            matchMoves.add(currentMove);
+
+                            currentMove = new Move();
 
                             Cell finalRightCellCapture = rightCellCapture;
 
@@ -971,8 +1089,38 @@ public class Game extends AppCompatActivity
 
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
+
+                                    boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                    boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                    if (isStuck || isStuckOther)
+                                    {
+                                        timerTask.cancel();
+                                        tv_j_time.setText(getTimerText());
+                                        time = 0;
+
+                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                        String result = "";
+
+                                        if(botWon)
+                                        {
+                                            result = "Lost";
+                                        }
+                                        else
+                                        {
+                                            result = "Won";
+                                        }
+
+                                        tv_j_result.setText(result);
+                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                        gameOver = true;
+                                        Log.d("Game", "GAME OVER");
+                                    }
 
 
                                 }
@@ -994,6 +1142,15 @@ public class Game extends AppCompatActivity
                         {
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
+                            currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                            currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                            currentMove.setToSquareRowB(rightCell.getRow());
+                            currentMove.setToSquareColB(rightCell.getCol());
+                            currentMove.setTurnNumber(turnCounter);
+                            matchMoves.add(currentMove);
+
+                            currentMove = new Move();
+
                             Cell finalRightCell = rightCell;
                             botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                             {
@@ -1013,8 +1170,38 @@ public class Game extends AppCompatActivity
 
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
+
+                                    boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                    boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                    if (isStuck || isStuckOther)
+                                    {
+                                        timerTask.cancel();
+                                        tv_j_time.setText(getTimerText());
+                                        time = 0;
+
+                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                        String result = "";
+
+                                        if(botWon)
+                                        {
+                                            result = "Lost";
+                                        }
+                                        else
+                                        {
+                                            result = "Won";
+                                        }
+
+                                        tv_j_result.setText(result);
+                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                        gameOver = true;
+                                        Log.d("Game", "GAME OVER");
+                                    }
 
 
                                 }
@@ -1026,6 +1213,15 @@ public class Game extends AppCompatActivity
                     else
                     {
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
+
+                        currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                        currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                        currentMove.setToSquareRowB(leftCell.getRow());
+                        currentMove.setToSquareColB(leftCell.getCol());
+                        currentMove.setTurnNumber(turnCounter);
+                        matchMoves.add(currentMove);
+
+                        currentMove = new Move();
 
                         Cell finalLeftCell = leftCell;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1046,8 +1242,38 @@ public class Game extends AppCompatActivity
 
                                 tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                turnCounter++;
                                 playerTurn = true;
                                 botTurn = false;
+
+                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                if (isStuck || isStuckOther)
+                                {
+                                    timerTask.cancel();
+                                    tv_j_time.setText(getTimerText());
+                                    time = 0;
+
+                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                    String result = "";
+
+                                    if(botWon)
+                                    {
+                                        result = "Lost";
+                                    }
+                                    else
+                                    {
+                                        result = "Won";
+                                    }
+
+                                    tv_j_result.setText(result);
+                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                    gameOver = true;
+                                    Log.d("Game", "GAME OVER");
+                                }
 
 
                             }
@@ -1130,6 +1356,15 @@ public class Game extends AppCompatActivity
 
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
 
+                        currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                        currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                        currentMove.setToSquareRowB(leftCellCapture.getRow());
+                        currentMove.setToSquareColB(leftCellCapture.getCol());
+                        currentMove.setTurnNumber(turnCounter);
+                        matchMoves.add(currentMove);
+
+                        currentMove = new Move();
+
                         Cell finalLeftCellCapture = leftCellCapture;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                         {
@@ -1151,8 +1386,38 @@ public class Game extends AppCompatActivity
 
                                 tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                turnCounter++;
                                 playerTurn = true;
                                 botTurn = false;
+
+                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                if (isStuck || isStuckOther)
+                                {
+                                    timerTask.cancel();
+                                    tv_j_time.setText(getTimerText());
+                                    time = 0;
+
+                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                    String result = "";
+
+                                    if(botWon)
+                                    {
+                                        result = "Lost";
+                                    }
+                                    else
+                                    {
+                                        result = "Won";
+                                    }
+
+                                    tv_j_result.setText(result);
+                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                    gameOver = true;
+                                    Log.d("Game", "GAME OVER");
+                                }
 
 
                             }
@@ -1164,6 +1429,15 @@ public class Game extends AppCompatActivity
                     else if (canCaptureAndMoveLeftUp)
                     {
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpperCapture, bv);
+
+                        currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                        currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                        currentMove.setToSquareRowB(leftCellUpperCapture.getRow());
+                        currentMove.setToSquareColB(leftCellUpperCapture.getCol());
+                        currentMove.setTurnNumber(turnCounter);
+                        matchMoves.add(currentMove);
+
+                        currentMove = new Move();
 
                         Cell finalLeftCellUpperCapture = leftCellUpperCapture;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1187,8 +1461,38 @@ public class Game extends AppCompatActivity
 
                                 tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                turnCounter++;
                                 playerTurn = true;
                                 botTurn = false;
+
+                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                if (isStuck || isStuckOther)
+                                {
+                                    timerTask.cancel();
+                                    tv_j_time.setText(getTimerText());
+                                    time = 0;
+
+                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                    String result = "";
+
+                                    if(botWon)
+                                    {
+                                        result = "Lost";
+                                    }
+                                    else
+                                    {
+                                        result = "Won";
+                                    }
+
+                                    tv_j_result.setText(result);
+                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                    gameOver = true;
+                                    Log.d("Game", "GAME OVER");
+                                }
 
 
                             }
@@ -1212,6 +1516,15 @@ public class Game extends AppCompatActivity
                         {
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
 
+                            currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                            currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                            currentMove.setToSquareRowB(rightCellCapture.getRow());
+                            currentMove.setToSquareColB(rightCellCapture.getCol());
+                            currentMove.setTurnNumber(turnCounter);
+                            matchMoves.add(currentMove);
+
+                            currentMove = new Move();
+
                             Cell finalRightCellCapture = rightCellCapture;
 
                             botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1233,8 +1546,38 @@ public class Game extends AppCompatActivity
 
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
+
+                                    boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                    boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                    if (isStuck || isStuckOther)
+                                    {
+                                        timerTask.cancel();
+                                        tv_j_time.setText(getTimerText());
+                                        time = 0;
+
+                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                        String result = "";
+
+                                        if(botWon)
+                                        {
+                                            result = "Lost";
+                                        }
+                                        else
+                                        {
+                                            result = "Won";
+                                        }
+
+                                        tv_j_result.setText(result);
+                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                        gameOver = true;
+                                        Log.d("Game", "GAME OVER");
+                                    }
 
 
                                 }
@@ -1245,6 +1588,15 @@ public class Game extends AppCompatActivity
                         else if (canCaptureAndMoveRightUp)
                         {
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpperCapture, bv);
+
+                            currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                            currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                            currentMove.setToSquareRowB(rightCellUpperCapture.getRow());
+                            currentMove.setToSquareColB(rightCellUpperCapture.getCol());
+                            currentMove.setTurnNumber(turnCounter);
+                            matchMoves.add(currentMove);
+
+                            currentMove = new Move();
 
                             Cell finalRightCellUpperCapture = rightCellUpperCapture;
                             botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1257,13 +1609,48 @@ public class Game extends AppCompatActivity
                                     board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
 
 
+                                    if (capturedPiece != null)
+                                    {
+                                        capturedPiece.getCell().removePiece();
+                                        capturedPiece = null;
+                                    }
 
                                     bv.invalidate();
 
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
+
+                                    boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                    boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                    if (isStuck || isStuckOther)
+                                    {
+                                        timerTask.cancel();
+                                        tv_j_time.setText(getTimerText());
+                                        time = 0;
+
+                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                        String result = "";
+
+                                        if(botWon)
+                                        {
+                                            result = "Lost";
+                                        }
+                                        else
+                                        {
+                                            result = "Won";
+                                        }
+
+                                        tv_j_result.setText(result);
+                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                        gameOver = true;
+                                        Log.d("Game", "GAME OVER");
+                                    }
 
 
                                 }
@@ -1290,6 +1677,15 @@ public class Game extends AppCompatActivity
                         {
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
+                            currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                            currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                            currentMove.setToSquareRowB(rightCell.getRow());
+                            currentMove.setToSquareColB(rightCell.getCol());
+                            currentMove.setTurnNumber(turnCounter);
+                            matchMoves.add(currentMove);
+
+                            currentMove = new Move();
+
                             Cell finalRightCell = rightCell;
                             botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                             {
@@ -1305,8 +1701,38 @@ public class Game extends AppCompatActivity
 
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
+
+                                    boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                    boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                    if (isStuck || isStuckOther)
+                                    {
+                                        timerTask.cancel();
+                                        tv_j_time.setText(getTimerText());
+                                        time = 0;
+
+                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                        String result = "";
+
+                                        if(botWon)
+                                        {
+                                            result = "Lost";
+                                        }
+                                        else
+                                        {
+                                            result = "Won";
+                                        }
+
+                                        tv_j_result.setText(result);
+                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                        gameOver = true;
+                                        Log.d("Game", "GAME OVER");
+                                    }
 
 
                                 }
@@ -1317,6 +1743,15 @@ public class Game extends AppCompatActivity
                         else if (canMoveRightUp)
                         {
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpper, bv);
+
+                            currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                            currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                            currentMove.setToSquareRowB(rightCellUpper.getRow());
+                            currentMove.setToSquareColB(rightCellUpper.getCol());
+                            currentMove.setTurnNumber(turnCounter);
+                            matchMoves.add(currentMove);
+
+                            currentMove = new Move();
 
                             Cell finalRightCellUpper = rightCellUpper;
                             botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1333,9 +1768,38 @@ public class Game extends AppCompatActivity
 
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
 
+                                    boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                    boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                    if (isStuck || isStuckOther)
+                                    {
+                                        timerTask.cancel();
+                                        tv_j_time.setText(getTimerText());
+                                        time = 0;
+
+                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                        String result = "";
+
+                                        if(botWon)
+                                        {
+                                            result = "Lost";
+                                        }
+                                        else
+                                        {
+                                            result = "Won";
+                                        }
+
+                                        tv_j_result.setText(result);
+                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                        gameOver = true;
+                                        Log.d("Game", "GAME OVER");
+                                    }
 
                                 }
                             });
@@ -1346,6 +1810,15 @@ public class Game extends AppCompatActivity
                     else if (canMoveLeftUp)
                     {
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpper, bv);
+
+                        currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                        currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                        currentMove.setToSquareRowB(leftCellUpper.getRow());
+                        currentMove.setToSquareColB(leftCellUpper.getCol());
+                        currentMove.setTurnNumber(turnCounter);
+                        matchMoves.add(currentMove);
+
+                        currentMove = new Move();
 
                         Cell finalLeftCellUpper = leftCellUpper;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1362,9 +1835,38 @@ public class Game extends AppCompatActivity
 
                                 tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                turnCounter++;
                                 playerTurn = true;
                                 botTurn = false;
 
+                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                if (isStuck || isStuckOther)
+                                {
+                                    timerTask.cancel();
+                                    tv_j_time.setText(getTimerText());
+                                    time = 0;
+
+                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                    String result = "";
+
+                                    if(botWon)
+                                    {
+                                        result = "Lost";
+                                    }
+                                    else
+                                    {
+                                        result = "Won";
+                                    }
+
+                                    tv_j_result.setText(result);
+                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                    gameOver = true;
+                                    Log.d("Game", "GAME OVER");
+                                }
 
                             }
                         });
@@ -1374,6 +1876,15 @@ public class Game extends AppCompatActivity
                     else
                     {
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
+
+                        currentMove.setFromSquareRowB(botPiece.getCell().getRow());
+                        currentMove.setFromSquareColB(botPiece.getCell().getCol());
+                        currentMove.setToSquareRowB(leftCell.getRow());
+                        currentMove.setToSquareColB(leftCell.getCol());
+                        currentMove.setTurnNumber(turnCounter);
+                        matchMoves.add(currentMove);
+
+                        currentMove = new Move();
 
                         Cell finalLeftCell = leftCell;
                         botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -1390,8 +1901,38 @@ public class Game extends AppCompatActivity
 
                                 tv_j_userTurn.setVisibility(View.VISIBLE);
 
+                                turnCounter++;
                                 playerTurn = true;
                                 botTurn = false;
+
+                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                if (isStuck || isStuckOther)
+                                {
+                                    timerTask.cancel();
+                                    tv_j_time.setText(getTimerText());
+                                    time = 0;
+
+                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                    String result = "";
+
+                                    if(botWon)
+                                    {
+                                        result = "Lost";
+                                    }
+                                    else
+                                    {
+                                        result = "Won";
+                                    }
+
+                                    tv_j_result.setText(result);
+                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                    gameOver = true;
+                                    Log.d("Game", "GAME OVER");
+                                }
 
 
                             }
@@ -1473,6 +2014,7 @@ public class Game extends AppCompatActivity
                                             bv.invalidate();
 
                                             //Keep piece selected at new location
+                                            Cell originalFrom = from;
                                             from = to;
                                             currentPiece = from.getPiece();
 
@@ -1499,6 +2041,11 @@ public class Game extends AppCompatActivity
                                             }
                                             else
                                             {
+                                                currentMove.setFromSquareRowU(originalFrom.getRow());
+                                                currentMove.setFromSquareColU(originalFrom.getCol());
+                                                currentMove.setToSquareRowU(to.getRow());
+                                                currentMove.setToSquareColU(to.getCol());
+
                                                 if (crownPiece(currentPiece) && !currentPiece.isCrowned())
                                                 {
                                                     currentPiece.makeCrowned();
@@ -1514,7 +2061,34 @@ public class Game extends AppCompatActivity
                                                 tv_j_userTurn.setVisibility(View.INVISIBLE);
                                                 tv_j_captureAlert.setVisibility(View.INVISIBLE);
 
+                                                boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                                boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
 
+                                                if (isStuck || isStuckOther)
+                                                {
+                                                    timerTask.cancel();
+                                                    tv_j_time.setText(getTimerText());
+                                                    time = 0;
+
+                                                    cons_j_gameOver.setVisibility(View.VISIBLE);
+
+                                                    String result = "";
+
+                                                    if(botWon)
+                                                    {
+                                                        result = "Lost";
+                                                    }
+                                                    else
+                                                    {
+                                                        result = "Won";
+                                                    }
+
+                                                    tv_j_result.setText(result);
+                                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                                    gameOver = true;
+                                                    Log.d("Game", "GAME OVER");
+                                                }
                                                 easyDifficultyBotTurn();
 
                                             }
@@ -1533,6 +2107,9 @@ public class Game extends AppCompatActivity
                                 {
                                     currentPiece.animatePiece(currentPiece, from, to, bv);
 
+
+
+
                                     currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                                     {
                                         @Override
@@ -1540,6 +2117,12 @@ public class Game extends AppCompatActivity
                                         {
                                             //public void movePiece(int fromRow, int fromCol, int toRow, int toCol)
                                             board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+
+                                            currentMove.setFromSquareRowU(from.getRow());
+                                            currentMove.setFromSquareColU(from.getCol());
+                                            currentMove.setToSquareRowU(to.getRow());
+                                            currentMove.setToSquareColU(to.getCol());
+
                                             Log.d("Game: ", "moved from: " + from.getRow() + "," + from.getCol() + ", to: " + to.getRow() + "," + to.getCol());
 
                                             if (crownPiece(currentPiece) && !currentPiece.isCrowned())
@@ -1555,8 +2138,38 @@ public class Game extends AppCompatActivity
                                             playerTurn = false;
                                             botTurn = true;
 
+
                                             tv_j_userTurn.setVisibility(View.INVISIBLE);
                                             tv_j_captureAlert.setVisibility(View.INVISIBLE);
+
+                                            boolean isStuck = canNoLongerMoveOrNoMorePieces("Light");
+                                            boolean isStuckOther = canNoLongerMoveOrNoMorePieces("Dark");
+
+                                            if (isStuck || isStuckOther)
+                                            {
+                                                timerTask.cancel();
+                                                tv_j_time.setText(getTimerText());
+                                                time = 0;
+
+                                                cons_j_gameOver.setVisibility(View.VISIBLE);
+                                                gameOver = true;
+
+                                                String result = "";
+
+                                                if(botWon)
+                                                {
+                                                    result = "Lost";
+                                                }
+                                                else
+                                                {
+                                                    result = "Won";
+                                                }
+
+                                                tv_j_result.setText(result);
+                                                tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                                Log.d("Game", "GAME OVER");
+                                            }
 
 
 
@@ -1602,6 +2215,260 @@ public class Game extends AppCompatActivity
             }
         }
     }
+
+    private boolean canNoLongerMoveOrNoMorePieces(String color)
+    {
+        int rightCellRow = -1;
+        int rightCellCol = -1;
+        Cell rightCell;
+        int leftCellRow = -1;
+        int leftCellCol = -1;
+        Cell leftCell;
+
+        //LOWER
+        //2 row and 2 col away
+        int lowerRightCellRow = -1;
+        int lowerRightCellCol = -1;
+        Cell lowerRightCell = null;
+        int lowerLeftCellRow = -1;
+        int lowerLeftCellCol = -1;
+        Cell lowerLeftCell = null;
+
+        boolean canMoveLeft = false;
+        boolean canMoveRight = false;
+        boolean canMoveLeftOther = false;
+        boolean canMoveRightOther = false;
+
+        ArrayList<Piece> darkPieces = new ArrayList<>();
+        ArrayList<Piece> lightPieces = new ArrayList<>();
+        if (color.equals("Dark"))
+        {
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Cell cell = board.getCell(row, col);
+                    if (cell.containsPiece())
+                    {
+                        Piece piece = cell.getPiece();
+                        if (piece.getColor().equals("Dark"))
+                        {
+                            darkPieces.add(piece);
+                        }
+                    }
+                }
+            }
+
+            if (darkPieces.isEmpty())
+            {
+                userWon = true;
+                return true;
+            }
+            else
+            {
+                for (Piece piece : darkPieces)
+                {
+                    if (!piece.isCrowned())
+                    {
+                        rightCellRow = piece.getCell().getRow() + 1;
+                        rightCellCol = piece.getCell().getCol() + 1;
+                        rightCell = board.getCell(rightCellRow, rightCellCol);
+
+                        leftCellRow = piece.getCell().getRow() + 1;
+                        leftCellCol = piece.getCell().getCol() - 1;
+                        leftCell = board.getCell(leftCellRow, leftCellCol);
+
+                        if (leftCell != null)
+                        {
+                            canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        }
+
+                        if (rightCell != null)
+                        {
+                            canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        }
+
+                        if (canMoveLeft || canMoveRight)
+                        {
+                            //they can still move
+                            return false;
+                        }
+
+                    }
+                    else
+                    {
+                        //LOWER
+
+                        lowerRightCellRow = piece.getCell().getRow() + 1;
+                        lowerRightCellCol = piece.getCell().getCol() + 1;
+                        lowerRightCell = board.getCell(lowerRightCellRow, lowerRightCellCol);
+                        lowerLeftCellRow = piece.getCell().getRow() + 1;
+                        lowerLeftCellCol = piece.getCell().getCol() - 1;
+                        lowerLeftCell = board.getCell(lowerLeftCellRow, lowerLeftCellCol);
+
+                        //UPPER
+
+                        rightCellRow = piece.getCell().getRow() - 1;
+                        rightCellCol = piece.getCell().getCol() + 1;
+                        rightCell = board.getCell(rightCellRow, rightCellCol);
+                        leftCellRow = piece.getCell().getRow() - 1;
+                        leftCellCol = piece.getCell().getCol() - 1;
+                        leftCell = board.getCell(leftCellRow, leftCellCol);
+
+
+                        if (leftCell != null)
+                        {
+                            canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        }
+
+                        if (rightCell != null)
+                        {
+                            canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        }
+
+                        if (lowerRightCell != null)
+                        {
+                            canMoveRightOther = canPieceMove(piece, piece.getCell(), lowerRightCell);
+                        }
+
+                        if (lowerLeftCell != null)
+                        {
+                            canMoveLeftOther = canPieceMove(piece, piece.getCell(), lowerLeftCell);
+                        }
+
+                        if (canMoveLeft || canMoveRight || canMoveRightOther || canMoveLeftOther)
+                        {
+                            //they can still move
+                            return false;
+                        }
+
+
+                    }
+                }
+            }
+
+
+            userWon = true;
+            return true;
+
+        }
+        else
+        {
+            for (int row = 0; row < 8; row++)
+            {
+                for (int col = 0; col < 8; col++)
+                {
+                    Cell cell = board.getCell(row, col);
+                    if (cell.containsPiece())
+                    {
+                        Piece piece = cell.getPiece();
+                        if (piece.getColor().equals("Light"))
+                        {
+                            lightPieces.add(piece);
+                        }
+                    }
+                }
+            }
+
+            if (lightPieces.isEmpty())
+            {
+                botWon = true;
+                return true;
+            }
+            else
+            {
+                for (Piece piece : lightPieces)
+                {
+                    if (!piece.isCrowned())
+                    {
+                        //2 row and 2 col away
+                        rightCellRow = piece.getCell().getRow() - 1;
+                        rightCellCol = piece.getCell().getCol() + 1;
+                        rightCell = board.getCell(rightCellRow, rightCellCol);
+                        leftCellRow = piece.getCell().getRow() - 1;
+                        leftCellCol = piece.getCell().getCol() - 1;
+                        leftCell = board.getCell(leftCellRow, leftCellCol);
+
+
+
+                        if (leftCell != null)
+                        {
+                            canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        }
+
+                        if (rightCell != null)
+                        {
+                            canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        }
+
+                        if (canMoveLeft || canMoveRight)
+                        {
+                            //they can still move
+                            return false;
+                        }
+
+
+                    }
+                    else
+                    {
+                        //LOWER
+                        //2 row and 2 col away
+                        lowerRightCellRow = piece.getCell().getRow() + 1;
+                        lowerRightCellCol = piece.getCell().getCol() + 1;
+                        lowerRightCell = board.getCell(lowerRightCellRow, lowerRightCellCol);
+                        lowerLeftCellRow = piece.getCell().getRow() + 1;
+                        lowerLeftCellCol = piece.getCell().getCol() - 1;
+                        lowerLeftCell = board.getCell(lowerLeftCellRow, lowerLeftCellCol);
+
+                        //UPPER
+                        //2 row and 2 col away
+                        rightCellRow = piece.getCell().getRow() - 1;
+                        rightCellCol = piece.getCell().getCol() + 1;
+                        rightCell = board.getCell(rightCellRow, rightCellCol);
+                        leftCellRow = piece.getCell().getRow() - 1;
+                        leftCellCol = piece.getCell().getCol() - 1;
+                        leftCell = board.getCell(leftCellRow, leftCellCol);
+
+
+
+                        if (leftCell != null)
+                        {
+                            canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        }
+
+                        if (rightCell != null)
+                        {
+                            canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        }
+
+                        if (lowerRightCell != null)
+                        {
+                            canMoveRightOther = canPieceMove(piece, piece.getCell(), lowerRightCell);
+                        }
+
+                        if (lowerLeftCell != null)
+                        {
+                            canMoveLeftOther = canPieceMove(piece, piece.getCell(), lowerLeftCell);
+                        }
+
+                        if (canMoveLeft || canMoveRight || canMoveRightOther || canMoveLeftOther)
+                        {
+                            //they can still move
+                            return false;
+                        }
+
+                    }
+
+                }
+            }
+
+            botWon = true;
+            return true;
+        }
+
+
+    }
+
 
 
     private ArrayList<Cell> isAnotherCaptureAvailable(Piece piece)
@@ -1666,6 +2533,9 @@ public class Game extends AppCompatActivity
             leftCellRow = piece.getCell().getRow() - 2;
             leftCellCol = piece.getCell().getCol() - 2;
             leftCell = board.getCell(leftCellRow, leftCellCol);
+
+
+
 
         }
 
@@ -1754,7 +2624,9 @@ public class Game extends AppCompatActivity
     //Piece didn't get deleted and wrong piece might've? Hard to tell.
     //Didn't see any errors
 
-
+    //Game is over before user or bot can take last piece
+    //Time shown at end of game is wrong
+    //Ensure moves are being tracked correctly
 
 
 }

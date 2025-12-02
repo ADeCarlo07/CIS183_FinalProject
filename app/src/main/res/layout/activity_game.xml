@@ -68,6 +68,19 @@
         tools:visibility="visible" />
 
     <TextView
+        android:id="@+id/tv_v_game_timePassed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Time"
+        android:textColor="#f7e8ca"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
         android:id="@+id/tv_v_game_captureAlert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,5 +92,128 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="invisible" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cons_v_game_gameOver"
+        android:layout_width="333dp"
+        android:layout_height="440dp"
+        android:background="#CAB78F"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/boardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/boardView"
+        tools:visibility="invisible">
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="79dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="79dp"
+            android:text="Game Over!"
+            android:textColor="#341E1F"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="216dp"
+            android:layout_height="318dp"
+            android:background="#F5E6C8"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView11">
+
+            <TextView
+                android:id="@+id/textView21"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="66dp"
+                android:layout_marginEnd="66dp"
+                android:layout_marginBottom="1dp"
+                android:text="Total Turns:"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_v_game_turns"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_v_game_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="86dp"
+                android:layout_marginEnd="85dp"
+                android:layout_marginBottom="19dp"
+                android:text="Result"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/textView21"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_v_game_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="90dp"
+                android:layout_marginEnd="90dp"
+                android:layout_marginBottom="66dp"
+                android:text="Time"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/btn_v_game_retry"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/textView23"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="65dp"
+                android:layout_marginEnd="65dp"
+                android:layout_marginBottom="1dp"
+                android:text="Time Taken:"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_v_game_time"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_v_game_turns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="88dp"
+                android:layout_marginEnd="88dp"
+                android:layout_marginBottom="19dp"
+                android:text="Turns"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/textView23"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/btn_v_game_retry"
+                android:layout_width="84dp"
+                android:layout_height="67dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="19dp"
+                android:text="Retry"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/btn_v_game_quit"
+                android:layout_width="84dp"
+                android:layout_height="67dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="19dp"
+                android:text="Quit"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
