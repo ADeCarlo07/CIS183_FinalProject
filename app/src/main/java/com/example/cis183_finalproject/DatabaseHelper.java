@@ -518,5 +518,29 @@ public class DatabaseHelper extends SQLiteOpenHelper
         db.close();
     }
 
+    public void addNewMatchToDBGivenUsername(String username, Match match, ArrayList<Move> moves)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String createStatement = "INSERT INTO " + matches_table_name + " (username, result, difficultyId, time) VALUES('" + username + "', '" + match.getResult() + "', " + match.getDifficultyId() + ", " + match.getTime() + ");";
+
+        db.execSQL(createStatement);
+
+        //get last inserted row id
+        Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
+        cursor.moveToFirst();
+        int curMatchId = cursor.getInt(0);
+        cursor.close();
+
+        for(Move move : moves)
+        {
+            String createMoves = "INSERT INTO " + moves_table_name + " (matchId, turnNumber, toSquareRowU, toSquareColU, fromSquareRowU, fromSquareColU, toSquareRowB, toSquareColB, fromSquareRowB, fromSquareColB) VALUES(" + curMatchId + ", " + move.getTurnNumber() + ", " + move.getToSquareRowU() + ", " + move.getToSquareColU() + ", " + move.getFromSquareRowU() + ", " + move.getFromSquareColU() + ", " + move.getToSquareRowB() + ", " + move.getToSquareColB() + ", " + move.getFromSquareRowB() + ", " + move.getFromSquareColB() + ");";
+            db.execSQL(createMoves);
+        }
+
+        db.close();
+
+
+    }
+
 
 }

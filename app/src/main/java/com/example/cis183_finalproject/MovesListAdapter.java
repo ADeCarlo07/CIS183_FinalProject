@@ -77,8 +77,17 @@ public class MovesListAdapter extends BaseAdapter
         tv_j_uFrom.setText(String.valueOf(getSquareNumber(move.getFromSquareRowU(), move.getFromSquareColU())));
         tv_j_uTo.setText(String.valueOf(getSquareNumber(move.getToSquareRowU(), move.getToSquareColU())));
 
-        tv_j_bFrom.setText(String.valueOf(getSquareNumber(move.getFromSquareRowB(), move.getFromSquareColB())));
-        tv_j_bTo.setText(String.valueOf(getSquareNumber(move.getToSquareRowB(), move.getToSquareColB())));
+        if (move.getFromSquareRowB() == -1 && move.getFromSquareColB() == -1 && move.getToSquareRowB() == -1 && move.getToSquareColB() == -1)
+        {
+            tv_j_bFrom.setText("Trapped");
+            tv_j_bTo.setText("Trapped");
+        }
+        else
+        {
+            tv_j_bFrom.setText(String.valueOf(getSquareNumber(move.getFromSquareRowB(), move.getFromSquareColB())));
+            tv_j_bTo.setText(String.valueOf(getSquareNumber(move.getToSquareRowB(), move.getToSquareColB())));
+        }
+
 
         //debugging purposes
         Log.d("Move Info ", "bot From " + move.getFromSquareRowU() + ", " + move.getFromSquareColU());
@@ -96,6 +105,9 @@ public class MovesListAdapter extends BaseAdapter
     //conventions, that is why. When a normal match is played out it will look more acceptable.
     private int getSquareNumber(int row, int col)
     {
+
+
+
         int num = 33;
         for (int r = 0; r <= row; r++)
         {
