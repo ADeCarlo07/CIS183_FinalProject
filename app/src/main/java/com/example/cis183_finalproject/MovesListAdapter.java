@@ -108,14 +108,14 @@ public class MovesListAdapter extends BaseAdapter
 
 
 
-        int num = 33;
+        int num = 0;
         for (int r = 0; r <= row; r++)
         {
             for (int c = 0; c < 8; c++)
             {
                 if ((r + c) % 2 == 1)
                 {
-                    num--;
+                    num++;
 
                 }
 

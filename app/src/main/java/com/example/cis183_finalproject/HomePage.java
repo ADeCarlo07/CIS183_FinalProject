@@ -101,6 +101,7 @@ public class HomePage extends AppCompatActivity
             public void onClick(View v)
             {
                 SessionData.easyModeSelected = false;
+                startActivity(new Intent(HomePage.this, Game.class));
             }
         });
     }
