@@ -20,6 +20,7 @@ public class BoardView extends View
     Bitmap lightPiece = BitmapFactory.decodeResource(getResources(), R.drawable.checkers_light);
     Bitmap darkCrown = BitmapFactory.decodeResource(getResources(), R.drawable.checkers_dark_crown);
     Bitmap lightCrown = BitmapFactory.decodeResource(getResources(), R.drawable.checkers_light_crown);
+    Bitmap selectedRing = BitmapFactory.decodeResource(getResources(), R.drawable.selection_ring);
     private float scaleFactor = 1.0f;
     private float cellSide = 130f;
     private float originX = 20f;
@@ -31,6 +32,9 @@ public class BoardView extends View
     private Board board;
 
     private OnCellClickListener listener;
+
+    int selectedCol;
+    int selectedRow;
 
     public float getCellSide() { return cellSide; }
     public float getOriginX()  { return originX; }
@@ -44,6 +48,21 @@ public class BoardView extends View
 
         setupInitialPieces();
     }
+
+    public void drawSelectionRing(int col, int row)
+    {
+        selectedCol = col;
+        selectedRow = row;
+        invalidate();
+    }
+
+    public void removeSelectionRing()
+    {
+        selectedCol = -1;
+        selectedRow = -1;
+        invalidate();
+    }
+
 
     public Board getBoard()
     {
@@ -112,7 +131,10 @@ public class BoardView extends View
     @Override
     protected void onDraw(Canvas canvas)
     {
-        if (canvas == null) return;
+        if (canvas == null)
+        {
+            return;
+        }
 
         float boardSide = Math.min(getWidth(), getHeight()) * scaleFactor;
         cellSide = boardSide / 8f;
@@ -121,7 +143,15 @@ public class BoardView extends View
 
         drawBoard(canvas);
 
+        if (selectedCol >= 0 && selectedRow >= 0)
+        {
+            float margin = cellSide * 0.075f;
+            float left = originX + selectedCol * cellSide;
+            float top = originY + selectedRow * cellSide;
 
+            Rect dest = new Rect(Math.round(left + margin), Math.round(top + margin), Math.round(left + cellSide - margin), Math.round(top + cellSide - margin));
+            canvas.drawBitmap(selectedRing, null, dest, null);
+        }
     }
 
     private void drawBoard(Canvas canvas)
@@ -152,8 +182,15 @@ public class BoardView extends View
 
     private void drawSquareAt(Canvas canvas, int col, int row, boolean isDark)
     {
-
-        paint.setColor(isDark ? darkColor : lightColor);
+        if (isDark)
+        {
+            paint.setColor(darkColor);
+        }
+        else
+        {
+            paint.setColor(lightColor);
+        }
+        //paint.setColor(isDark ? darkColor : lightColor);
         canvas.drawRect(originX + col * cellSide, originY + row * cellSide, originX + (col + 1) * cellSide, originY + (row + 1) * cellSide, paint);
 
     }

@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/background_final">
 
     <TextView
         android:id="@+id/textView"
@@ -16,6 +17,7 @@
         android:layout_marginEnd="131dp"
         android:text="Sign In"
         android:textAlignment="center"
+        android:textColor="#744E52"
         android:textSize="48sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,6 +32,7 @@
         android:layout_marginTop="58dp"
         android:layout_marginEnd="149dp"
         android:text="Username:"
+        android:textColor="#744E52"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -44,6 +47,8 @@
         android:layout_marginEnd="78dp"
         android:ems="10"
         android:inputType="text"
+        android:textColor="#482B2E"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
@@ -54,39 +59,42 @@
         android:layout_width="138dp"
         android:layout_height="88dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginEnd="104dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="#482B2E"
         android:text="Sign Up"
+        android:textColor="#f7e8ca"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_v_signIn"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_v_signIn"
         android:layout_width="138dp"
         android:layout_height="88dp"
-        android:layout_marginTop="364dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="#482B2E"
         android:text="Sign In"
+        android:textColor="#f7e8ca"
         android:textSize="25sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_v_username" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="338dp"
         android:layout_marginEnd="254dp"
+        android:layout_marginBottom="7dp"
         android:text="Don't have an account?"
+        android:textColor="#482B2E"
         android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/btn_v_signUp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_v_username" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_v_error"

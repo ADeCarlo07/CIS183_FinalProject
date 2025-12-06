@@ -123,10 +123,12 @@
             android:layout_width="216dp"
             android:layout_height="318dp"
             android:background="#F5E6C8"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView11">
+            app:layout_constraintTop_toTopOf="@+id/textView11"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/textView21"
@@ -199,7 +201,9 @@
                 android:layout_height="67dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginBottom="19dp"
+                android:backgroundTint="#734D51"
                 android:text="Retry"
+                android:textColor="#F5E6C8"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -209,7 +213,9 @@
                 android:layout_height="67dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="19dp"
+                android:backgroundTint="#734D51"
                 android:text="Quit"
+                android:textColor="#F5E6C8"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

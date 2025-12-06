@@ -311,6 +311,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     public ArrayList<User> leaderboardRanking()
     {
+        calculateMatchPoints();
         ArrayList<User> listOfUsers = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -464,7 +465,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         if (cursor.moveToFirst())
         {
-            //we need a loop for this because we do not know how many students there is
+            //we need a loop for this because we do not know how many users there is
             do
             {
                 //returned to us by the query
@@ -537,10 +538,102 @@ public class DatabaseHelper extends SQLiteOpenHelper
             db.execSQL(createMoves);
         }
 
+        calculateMatchPoints();
+
         db.close();
 
 
     }
+
+    public void calculateMatchPoints()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase dbWriteable = this.getWritableDatabase();
+        ArrayList<User> listOfUsers = new ArrayList<>();
+        ArrayList<Match> listOfMatches = new ArrayList<>();
+
+        int totalPoints = 0;
+
+        String selectAllUsers = "SELECT username FROM " + users_table_name;
+
+        Cursor cursor = db.rawQuery(selectAllUsers, null);
+
+        if (cursor.moveToFirst())
+        {
+            //we need a loop for this because we do not know how many users there is
+            do
+            {
+                //returned to us by the query
+                String username = cursor.getString(0);
+
+                User user = new User();
+                user.setUsername(username);
+
+                listOfUsers.add(user);
+            }
+            while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        for (User user : listOfUsers)
+        {
+            String getAllDifficultyIdFromMatches = "SELECT difficultyId, result FROM " + matches_table_name + " WHERE username = '" + user.getUsername() + "';";
+
+            Cursor otherCursor = db.rawQuery(getAllDifficultyIdFromMatches, null);
+
+            if (otherCursor.moveToFirst())
+            {
+                //we need a loop for this because we do not know how many users there is
+                do
+                {
+                    //returned to us by the query
+                    int difficultyId = otherCursor.getInt(0);
+                    String result = otherCursor.getString(1);
+
+                    Match match = new Match();
+
+                    match.setDifficultyId(difficultyId);
+                    match.setResult(result);
+
+                    listOfMatches.add(match);
+                }
+                while (otherCursor.moveToNext());
+            }
+            otherCursor.close();
+
+            for (Match match : listOfMatches)
+            {
+                String getPointsPerMatch = "SELECT pointsPerWin FROM " + difficulties_table_name + " WHERE difficultyId = " + match.getDifficultyId() + ";";
+
+                Cursor anotherCursor = db.rawQuery(getPointsPerMatch, null);
+
+                if (anotherCursor.moveToFirst())
+                {
+                    int pointPerWin = anotherCursor.getInt(0);
+
+                    if (match.getResult().equals("Won"))
+                    {
+                        totalPoints += pointPerWin;
+                    }
+
+                }
+                anotherCursor.close();
+            }
+
+
+
+            String updateNumberOfPoints = "UPDATE " + users_table_name + " SET numPoints = " + totalPoints + " WHERE username = '" + user.getUsername() + "';";
+            dbWriteable.execSQL(updateNumberOfPoints);
+
+            listOfMatches = new ArrayList<>();
+            totalPoints = 0;
+
+        }
+
+        dbWriteable.close();
+        db.close();
+    }
+
 
 
 }

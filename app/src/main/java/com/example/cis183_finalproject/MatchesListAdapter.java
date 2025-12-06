@@ -68,6 +68,11 @@ public class MatchesListAdapter extends BaseAdapter
             tv_j_difficulty.setText(difficultyName);
             tv_j_result.setText(match.getResult());
 
+            view.setBackgroundColor(Color.parseColor("#744E52"));
+            tv_j_mode.setTextColor(Color.parseColor("#f7e8ca"));
+            tv_j_result.setTextColor(Color.parseColor("#f7e8ca"));
+            tv_j_difficulty.setTextColor(Color.parseColor("#f7e8ca"));
+
             if (tv_j_result.getText().toString().equals("Won"))
             {
                 view.setBackgroundColor(Color.parseColor("#f7e8ca"));
@@ -75,6 +80,7 @@ public class MatchesListAdapter extends BaseAdapter
                 tv_j_result.setTextColor(Color.parseColor("#744E52"));
                 tv_j_difficulty.setTextColor(Color.parseColor("#744E52"));
             }
+
         }
 
 

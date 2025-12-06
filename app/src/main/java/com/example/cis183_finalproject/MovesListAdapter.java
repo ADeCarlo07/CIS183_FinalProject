@@ -82,6 +82,11 @@ public class MovesListAdapter extends BaseAdapter
             tv_j_bFrom.setText("Trapped");
             tv_j_bTo.setText("Trapped");
         }
+        else if (move.getFromSquareRowB() == -2 && move.getFromSquareColB() == -2 && move.getToSquareRowB() == -2 && move.getToSquareColB() == -2)
+        {
+            tv_j_bFrom.setText("No Pieces");
+            tv_j_bTo.setText("No Pieces");
+        }
         else
         {
             tv_j_bFrom.setText(String.valueOf(getSquareNumber(move.getFromSquareRowB(), move.getFromSquareColB())));
