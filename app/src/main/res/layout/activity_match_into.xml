@@ -6,143 +6,157 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MatchInfo"
-    android:background="@drawable/general_background">
+    android:background="@drawable/possible_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout5"
+        android:layout_width="374dp"
+        android:layout_height="299dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="19dp"
+        android:background="#f7e8ca"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="151dp"
+            android:layout_marginEnd="162dp"
+            android:background="#f7e8ca"
+            android:text="Result:"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_v_matchInfo_result"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_v_matchInfo_difficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="142dp"
+            android:layout_marginEnd="154dp"
+            android:layout_marginBottom="32dp"
+            android:background="#f7e8ca"
+            android:text="Difficulty"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView17"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="127dp"
+            android:layout_marginEnd="138dp"
+            android:layout_marginBottom="1dp"
+            android:background="#f7e8ca"
+            android:text="Time Taken:"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_v_matchInfo_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_v_matchInfo_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="159dp"
+            android:layout_marginEnd="170dp"
+            android:layout_marginBottom="37dp"
+            android:background="#f7e8ca"
+            android:text="Time"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView19"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="151dp"
+            android:layout_marginEnd="163dp"
+            android:background="#f7e8ca"
+            android:text="Moves"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_v_matchInfo_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="154dp"
+            android:layout_marginEnd="164dp"
+            android:layout_marginBottom="37dp"
+            android:background="#f7e8ca"
+            android:text="Result"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/textView13"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="140dp"
+            android:layout_marginEnd="151dp"
+            android:background="#f7e8ca"
+            android:backgroundTint="#f7e8ca"
+            android:text="Difficulty:"
+            android:textColor="#482B2E"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_v_matchInfo_difficulty"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/textView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="124dp"
+        android:layout_marginStart="123dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginBottom="17dp"
+        android:background="#f7e8ca"
         android:text="Match Info"
         android:textColor="#482B2E"
         android:textSize="34sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="175dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="175dp"
-        android:background="#f7e8ca"
-        android:text="Result:"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-    <TextView
-        android:id="@+id/tv_v_matchInfo_difficulty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="166dp"
-        android:layout_marginEnd="167dp"
-        android:background="#f7e8ca"
-        android:text="Difficulty"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView13" />
-
-    <TextView
-        android:id="@+id/textView17"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="151dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="151dp"
-        android:background="#f7e8ca"
-        android:text="Time Taken:"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_v_matchInfo_difficulty" />
-
-    <TextView
-        android:id="@+id/tv_v_matchInfo_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="183dp"
-        android:layout_marginEnd="183dp"
-        android:background="#f7e8ca"
-        android:text="Time"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17" />
-
-    <TextView
-        android:id="@+id/textView19"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="175dp"
-        android:layout_marginTop="37dp"
-        android:layout_marginEnd="176dp"
-        android:background="#f7e8ca"
-        android:text="Moves"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_v_matchInfo_time" />
-
-    <TextView
-        android:id="@+id/tv_v_matchInfo_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="177dp"
-        android:layout_marginEnd="178dp"
-        android:background="#f7e8ca"
-        android:text="Result"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
-
-    <TextView
-        android:id="@+id/textView13"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="164dp"
-        android:layout_marginTop="37dp"
-        android:layout_marginEnd="164dp"
-        android:backgroundTint="#f7e8ca"
-        android:text="Difficulty:"
-        android:textColor="#482B2E"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_v_matchInfo_result"
-        android:background="#f7e8ca" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
         android:id="@+id/lv_v_matchInfo_moves"
         android:layout_width="408dp"
         android:layout_height="275dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="1dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout5" />
 
     <Button
         android:id="@+id/btn_v_matchInfo_back"
         android:layout_width="128dp"
         android:layout_height="57dp"
         android:layout_marginStart="141dp"
-        android:layout_marginTop="13dp"
         android:layout_marginEnd="142dp"
         android:layout_marginBottom="5dp"
         android:backgroundTint="#482B2E"
@@ -151,7 +165,6 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lv_v_matchInfo_moves" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

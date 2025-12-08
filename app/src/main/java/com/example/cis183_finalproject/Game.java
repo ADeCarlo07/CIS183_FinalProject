@@ -85,6 +85,11 @@ public class Game extends AppCompatActivity
     boolean captureMade;
     boolean moveMade;
 
+    TextView tv_j_uF;
+    TextView tv_j_uT;
+    TextView tv_j_bT;
+    TextView tv_j_bF;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -121,6 +126,10 @@ public class Game extends AppCompatActivity
         tv_j_time = findViewById(R.id.tv_v_game_time);
         tv_j_numTurns = findViewById(R.id.tv_v_game_turns);
         tv_j_result = findViewById(R.id.tv_v_game_result);
+        tv_j_uF = findViewById(R.id.tv_v_game_userMoveF);
+        tv_j_uT = findViewById(R.id.tv_v_game_userMoveT);
+        tv_j_bF = findViewById(R.id.tv_v_game_botMoveF);
+        tv_j_bT = findViewById(R.id.tv_v_game_botMoveT);
         img_j_backArrow = findViewById(R.id.img_v_game_backArrow);
         cons_j_gameOver = findViewById(R.id.cons_v_game_gameOver);
 
@@ -133,6 +142,33 @@ public class Game extends AppCompatActivity
 
         buttonClickListener();
 
+        tv_j_uF.setText("No Move");
+        tv_j_uT.setText("No Move");
+        tv_j_bF.setText("No Move");
+        tv_j_bT.setText("No Move");
+
+    }
+
+    private int getSquareNumber(int row, int col)
+    {
+        int num = 0;
+        for (int r = 0; r <= row; r++)
+        {
+            for (int c = 0; c < 8; c++)
+            {
+                if ((r + c) % 2 == 1)
+                {
+                    num++;
+
+                }
+
+                if (r == row && c == col)
+                {
+                    return num;
+                }
+            }
+        }
+        return -1;
     }
 
     private void howMuchTimeHasPassed()
@@ -1059,6 +1095,7 @@ public class Game extends AppCompatActivity
 
     private void continueBotCapture(Piece botPiece, Cell targetCell, Cell originalCell)
     {
+        Cell origin = botPiece.getCell();
         botPiece.animatePiece(botPiece, botPiece.getCell(), targetCell, bv);
 
         botPiece.objectMoveAnimator.removeAllListeners();
@@ -1068,7 +1105,7 @@ public class Game extends AppCompatActivity
             @Override
             public void onAnimationEnd(Animator animation)
             {
-                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(),
+                board.movePiece(origin.getRow(), origin.getCol(),
                         targetCell.getRow(), targetCell.getCol());
 
                 if (capturedPiece != null)
@@ -1102,6 +1139,16 @@ public class Game extends AppCompatActivity
                 currentMove.setToSquareColB(botPiece.getCell().getCol());
                 currentMove.setTurnNumber(turnCounter);
                 matchMoves.add(currentMove);
+
+                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                tv_j_uF.setText(String.valueOf(uFrom));
+                tv_j_uT.setText(String.valueOf(uTo));
+                tv_j_bF.setText(String.valueOf(bFrom));
+                tv_j_bT.setText(String.valueOf(bTo));
 
                 currentMove = new Move();
 
@@ -1613,7 +1660,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -1652,6 +1699,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(finalLeftCellCapture.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -1724,7 +1781,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
 
                                         if (capturedPiece != null)
                                         {
@@ -1763,6 +1820,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -1825,6 +1892,7 @@ public class Game extends AppCompatActivity
 
                             if (canMoveRight)
                             {
+                                Cell origin = botPiece.getCell();
                                 botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
                                 currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -1833,6 +1901,16 @@ public class Game extends AppCompatActivity
                                 currentMove.setToSquareColB(rightCell.getCol());
                                 currentMove.setTurnNumber(turnCounter);
                                 matchMoves.add(currentMove);
+
+                                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                tv_j_uF.setText(String.valueOf(uFrom));
+                                tv_j_uT.setText(String.valueOf(uTo));
+                                tv_j_bF.setText(String.valueOf(bFrom));
+                                tv_j_bT.setText(String.valueOf(bTo));
 
                                 currentMove = new Move();
 
@@ -1846,7 +1924,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
                                         if (crownPiece(botPiece) && !botPiece.isCrowned())
                                         {
@@ -1903,6 +1981,7 @@ public class Game extends AppCompatActivity
                         }
                         else
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -1911,6 +1990,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(leftCell.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -1924,7 +2013,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
                                     if (crownPiece(botPiece) && !botPiece.isCrowned())
                                     {
@@ -2063,7 +2152,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -2102,6 +2191,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(finalLeftCellCapture.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -2167,7 +2266,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -2206,6 +2305,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(finalLeftCellUpperCapture.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -2282,7 +2391,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
 
                                         if (capturedPiece != null)
                                         {
@@ -2321,6 +2430,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -2385,7 +2504,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
 
                                         if (capturedPiece != null)
                                         {
@@ -2424,6 +2543,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellUpperCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -2490,6 +2619,7 @@ public class Game extends AppCompatActivity
 
                             if (canMoveRight)
                             {
+                                Cell origin = botPiece.getCell();
                                 botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
                                 currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -2498,6 +2628,16 @@ public class Game extends AppCompatActivity
                                 currentMove.setToSquareColB(rightCell.getCol());
                                 currentMove.setTurnNumber(turnCounter);
                                 matchMoves.add(currentMove);
+
+                                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                tv_j_uF.setText(String.valueOf(uFrom));
+                                tv_j_uT.setText(String.valueOf(uTo));
+                                tv_j_bF.setText(String.valueOf(bFrom));
+                                tv_j_bT.setText(String.valueOf(bTo));
 
                                 currentMove = new Move();
 
@@ -2509,7 +2649,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
 
                                         bv.invalidate();
@@ -2561,6 +2701,7 @@ public class Game extends AppCompatActivity
                             }
                             else if (canMoveRightUp)
                             {
+                                Cell origin = botPiece.getCell();
                                 botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpper, bv);
 
                                 currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -2569,6 +2710,16 @@ public class Game extends AppCompatActivity
                                 currentMove.setToSquareColB(rightCellUpper.getCol());
                                 currentMove.setTurnNumber(turnCounter);
                                 matchMoves.add(currentMove);
+
+                                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                tv_j_uF.setText(String.valueOf(uFrom));
+                                tv_j_uT.setText(String.valueOf(uTo));
+                                tv_j_bF.setText(String.valueOf(bFrom));
+                                tv_j_bT.setText(String.valueOf(bTo));
 
                                 currentMove = new Move();
 
@@ -2580,7 +2731,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCellUpper.getRow() + "," + finalRightCellUpper.getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
 
 
                                         bv.invalidate();
@@ -2632,6 +2783,7 @@ public class Game extends AppCompatActivity
                         }
                         else if (canMoveLeftUp)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpper, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -2640,6 +2792,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(leftCellUpper.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -2651,7 +2813,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCellUpper.getRow() + "," + finalLeftCellUpper.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
 
 
                                     bv.invalidate();
@@ -2702,6 +2864,7 @@ public class Game extends AppCompatActivity
                         }
                         else
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -2713,6 +2876,16 @@ public class Game extends AppCompatActivity
 
                             turnCounter++;
 
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
+
                             currentMove = new Move();
 
                             Cell finalLeftCell = leftCell;
@@ -2723,7 +2896,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
 
                                     bv.invalidate();
@@ -2834,7 +3007,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -2873,6 +3046,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(finalLeftCellCapture.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -2945,7 +3128,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
 
                                         if (capturedPiece != null)
                                         {
@@ -2984,6 +3167,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -3046,6 +3239,7 @@ public class Game extends AppCompatActivity
 
                             if (canMoveRight)
                             {
+                                Cell origin = botPiece.getCell();
                                 botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
                                 currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -3054,6 +3248,16 @@ public class Game extends AppCompatActivity
                                 currentMove.setToSquareColB(rightCell.getCol());
                                 currentMove.setTurnNumber(turnCounter);
                                 matchMoves.add(currentMove);
+
+                                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                tv_j_uF.setText(String.valueOf(uFrom));
+                                tv_j_uT.setText(String.valueOf(uTo));
+                                tv_j_bF.setText(String.valueOf(bFrom));
+                                tv_j_bT.setText(String.valueOf(bTo));
 
                                 currentMove = new Move();
 
@@ -3067,7 +3271,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
                                         if (crownPiece(botPiece) && !botPiece.isCrowned())
                                         {
@@ -3124,6 +3328,7 @@ public class Game extends AppCompatActivity
                         }
                         else
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -3132,6 +3337,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(leftCell.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -3145,7 +3360,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
                                     if (crownPiece(botPiece) && !botPiece.isCrowned())
                                     {
@@ -3284,7 +3499,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -3323,6 +3538,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(finalLeftCellCapture.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -3388,7 +3613,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -3427,6 +3652,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(finalLeftCellUpperCapture.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -3503,7 +3738,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
 
                                         if (capturedPiece != null)
                                         {
@@ -3542,6 +3777,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -3606,7 +3851,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
 
                                         if (capturedPiece != null)
                                         {
@@ -3645,6 +3890,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellUpperCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -3711,6 +3966,7 @@ public class Game extends AppCompatActivity
 
                             if (canMoveRight)
                             {
+                                Cell origin = botPiece.getCell();
                                 botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
                                 currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -3719,6 +3975,16 @@ public class Game extends AppCompatActivity
                                 currentMove.setToSquareColB(rightCell.getCol());
                                 currentMove.setTurnNumber(turnCounter);
                                 matchMoves.add(currentMove);
+
+                                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                tv_j_uF.setText(String.valueOf(uFrom));
+                                tv_j_uT.setText(String.valueOf(uTo));
+                                tv_j_bF.setText(String.valueOf(bFrom));
+                                tv_j_bT.setText(String.valueOf(bTo));
 
                                 currentMove = new Move();
 
@@ -3730,7 +3996,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
 
                                         bv.invalidate();
@@ -3782,6 +4048,7 @@ public class Game extends AppCompatActivity
                             }
                             else if (canMoveRightUp)
                             {
+                                Cell origin = botPiece.getCell();
                                 botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpper, bv);
 
                                 currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -3790,6 +4057,16 @@ public class Game extends AppCompatActivity
                                 currentMove.setToSquareColB(rightCellUpper.getCol());
                                 currentMove.setTurnNumber(turnCounter);
                                 matchMoves.add(currentMove);
+
+                                int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                tv_j_uF.setText(String.valueOf(uFrom));
+                                tv_j_uT.setText(String.valueOf(uTo));
+                                tv_j_bF.setText(String.valueOf(bFrom));
+                                tv_j_bT.setText(String.valueOf(bTo));
 
                                 currentMove = new Move();
 
@@ -3801,7 +4078,7 @@ public class Game extends AppCompatActivity
                                     {
                                         Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCellUpper.getRow() + "," + finalRightCellUpper.getCol());
                                         //Update board state AFTER animation completes
-                                        board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
+                                        board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
 
 
                                         bv.invalidate();
@@ -3853,6 +4130,7 @@ public class Game extends AppCompatActivity
                         }
                         else if (canMoveLeftUp)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpper, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -3861,6 +4139,17 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(leftCellUpper.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
+
 
                             currentMove = new Move();
 
@@ -3872,7 +4161,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCellUpper.getRow() + "," + finalLeftCellUpper.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
 
 
                                     bv.invalidate();
@@ -3923,6 +4212,7 @@ public class Game extends AppCompatActivity
                         }
                         else
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -3931,6 +4221,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(leftCell.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -3942,7 +4242,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
 
                                     bv.invalidate();
@@ -4107,7 +4407,7 @@ public class Game extends AppCompatActivity
 
                     if (canCaptureAndMoveLeft)
                     {
-
+                        Cell origin = botPiece.getCell();
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
 
                         currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4116,6 +4416,16 @@ public class Game extends AppCompatActivity
                         currentMove.setToSquareColB(leftCellCapture.getCol());
                         currentMove.setTurnNumber(turnCounter);
                         matchMoves.add(currentMove);
+
+                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                        tv_j_uF.setText(String.valueOf(uFrom));
+                        tv_j_uT.setText(String.valueOf(uTo));
+                        tv_j_bF.setText(String.valueOf(bFrom));
+                        tv_j_bT.setText(String.valueOf(bTo));
 
                         currentMove = new Move();
 
@@ -4127,7 +4437,7 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                 if (capturedPiece != null)
                                 {
@@ -4198,6 +4508,7 @@ public class Game extends AppCompatActivity
 
                         if (canCaptureAndMoveRight)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4206,6 +4517,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(rightCellCapture.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -4218,7 +4539,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -4290,6 +4611,7 @@ public class Game extends AppCompatActivity
 
                         if (canMoveRight)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4298,6 +4620,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(rightCell.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -4309,7 +4641,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
                                     if (crownPiece(botPiece) && !botPiece.isCrowned())
                                     {
@@ -4366,6 +4698,7 @@ public class Game extends AppCompatActivity
                     }
                     else
                     {
+                        Cell origin = botPiece.getCell();
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
                         currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4374,6 +4707,16 @@ public class Game extends AppCompatActivity
                         currentMove.setToSquareColB(leftCell.getCol());
                         currentMove.setTurnNumber(turnCounter);
                         matchMoves.add(currentMove);
+
+                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                        tv_j_uF.setText(String.valueOf(uFrom));
+                        tv_j_uT.setText(String.valueOf(uTo));
+                        tv_j_bF.setText(String.valueOf(bFrom));
+                        tv_j_bT.setText(String.valueOf(bTo));
 
                         currentMove = new Move();
 
@@ -4385,7 +4728,7 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
                                 if (crownPiece(botPiece) && !botPiece.isCrowned())
                                 {
@@ -4511,7 +4854,7 @@ public class Game extends AppCompatActivity
 
                     if (canCaptureAndMoveLeft)
                     {
-
+                        Cell origin = botPiece.getCell();
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellCapture, bv);
 
                         currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4520,6 +4863,16 @@ public class Game extends AppCompatActivity
                         currentMove.setToSquareColB(leftCellCapture.getCol());
                         currentMove.setTurnNumber(turnCounter);
                         matchMoves.add(currentMove);
+
+                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                        tv_j_uF.setText(String.valueOf(uFrom));
+                        tv_j_uT.setText(String.valueOf(uTo));
+                        tv_j_bF.setText(String.valueOf(bFrom));
+                        tv_j_bT.setText(String.valueOf(bTo));
 
                         currentMove = new Move();
 
@@ -4531,7 +4884,7 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
+                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellCapture.getRow(), finalLeftCellCapture.getCol());
 
                                 if (capturedPiece != null)
                                 {
@@ -4590,6 +4943,7 @@ public class Game extends AppCompatActivity
                     }
                     else if (canCaptureAndMoveLeftUp)
                     {
+                        Cell origin = botPiece.getCell();
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpperCapture, bv);
 
                         currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4598,6 +4952,16 @@ public class Game extends AppCompatActivity
                         currentMove.setToSquareColB(leftCellUpperCapture.getCol());
                         currentMove.setTurnNumber(turnCounter);
                         matchMoves.add(currentMove);
+
+                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                        tv_j_uF.setText(String.valueOf(uFrom));
+                        tv_j_uT.setText(String.valueOf(uTo));
+                        tv_j_bF.setText(String.valueOf(bFrom));
+                        tv_j_bT.setText(String.valueOf(bTo));
 
                         currentMove = new Move();
 
@@ -4609,7 +4973,7 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
+                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpperCapture.getRow(), finalLeftCellUpperCapture.getCol());
 
                                 if (capturedPiece != null)
                                 {
@@ -4680,6 +5044,7 @@ public class Game extends AppCompatActivity
 
                         if (canCaptureAndMoveRight)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellCapture, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4688,6 +5053,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(rightCellCapture.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -4700,7 +5075,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalRightCellCapture.getRow(), finalRightCellCapture.getCol());
 
                                     if (capturedPiece != null)
                                     {
@@ -4757,6 +5132,7 @@ public class Game extends AppCompatActivity
                         }
                         else if (canCaptureAndMoveRightUp)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpperCapture, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4765,6 +5141,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(rightCellUpperCapture.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -4776,7 +5162,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT attempting to capture left at " + capturedPiece.getCell().getRow() + "," + capturedPiece.getCell().getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpperCapture.getRow(), finalRightCellUpperCapture.getCol());
 
 
                                     if (capturedPiece != null)
@@ -4849,6 +5235,7 @@ public class Game extends AppCompatActivity
 
                         if (canMoveRight)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCell, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4857,6 +5244,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(rightCell.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -4868,7 +5265,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
 
                                     bv.invalidate();
@@ -4920,6 +5317,7 @@ public class Game extends AppCompatActivity
                         }
                         else if (canMoveRightUp)
                         {
+                            Cell origin = botPiece.getCell();
                             botPiece.animatePiece(botPiece, botPiece.getCell(), rightCellUpper, bv);
 
                             currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4928,6 +5326,16 @@ public class Game extends AppCompatActivity
                             currentMove.setToSquareColB(rightCellUpper.getCol());
                             currentMove.setTurnNumber(turnCounter);
                             matchMoves.add(currentMove);
+
+                            int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                            int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                            int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                            int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                            tv_j_uF.setText(String.valueOf(uFrom));
+                            tv_j_uT.setText(String.valueOf(uTo));
+                            tv_j_bF.setText(String.valueOf(bFrom));
+                            tv_j_bT.setText(String.valueOf(bTo));
 
                             currentMove = new Move();
 
@@ -4939,7 +5347,7 @@ public class Game extends AppCompatActivity
                                 {
                                     Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCellUpper.getRow() + "," + finalRightCellUpper.getCol());
                                     //Update board state AFTER animation completes
-                                    board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
+                                    board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
 
 
                                     bv.invalidate();
@@ -4991,6 +5399,7 @@ public class Game extends AppCompatActivity
                     }
                     else if (canMoveLeftUp)
                     {
+                        Cell origin = botPiece.getCell();
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCellUpper, bv);
 
                         currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -4999,6 +5408,16 @@ public class Game extends AppCompatActivity
                         currentMove.setToSquareColB(leftCellUpper.getCol());
                         currentMove.setTurnNumber(turnCounter);
                         matchMoves.add(currentMove);
+
+                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                        tv_j_uF.setText(String.valueOf(uFrom));
+                        tv_j_uT.setText(String.valueOf(uTo));
+                        tv_j_bF.setText(String.valueOf(bFrom));
+                        tv_j_bT.setText(String.valueOf(bTo));
 
                         currentMove = new Move();
 
@@ -5010,7 +5429,7 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCellUpper.getRow() + "," + finalLeftCellUpper.getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
+                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
 
 
                                 bv.invalidate();
@@ -5061,6 +5480,7 @@ public class Game extends AppCompatActivity
                     }
                     else
                     {
+                        Cell origin = botPiece.getCell();
                         botPiece.animatePiece(botPiece, botPiece.getCell(), leftCell, bv);
 
                         currentMove.setFromSquareRowB(botPiece.getCell().getRow());
@@ -5069,6 +5489,16 @@ public class Game extends AppCompatActivity
                         currentMove.setToSquareColB(leftCell.getCol());
                         currentMove.setTurnNumber(turnCounter);
                         matchMoves.add(currentMove);
+
+                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                        tv_j_uF.setText(String.valueOf(uFrom));
+                        tv_j_uT.setText(String.valueOf(uTo));
+                        tv_j_bF.setText(String.valueOf(bFrom));
+                        tv_j_bT.setText(String.valueOf(bTo));
 
                         currentMove = new Move();
 
@@ -5080,7 +5510,7 @@ public class Game extends AppCompatActivity
                             {
                                 Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                 //Update board state AFTER animation completes
-                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
 
                                 bv.invalidate();
@@ -5446,8 +5876,15 @@ public class Game extends AppCompatActivity
         int leftCellCol = -1;
         Cell leftCell;
 
+        int rightCellRowCapture = -1;
+        int rightCellColCapture = -1;
+        Cell rightCellCapture;
+        int leftCellRowCapture = -1;
+        int leftCellColCapture = -1;
+        Cell leftCellCapture;
+
         //LOWER
-        //2 row and 2 col away
+
         int lowerRightCellRow = -1;
         int lowerRightCellCol = -1;
         Cell lowerRightCell = null;
@@ -5455,10 +5892,22 @@ public class Game extends AppCompatActivity
         int lowerLeftCellCol = -1;
         Cell lowerLeftCell = null;
 
+        int rightCellRowLowerCapture = -1;
+        int rightCellColLowerCapture = -1;
+        Cell rightCellLowerCapture;
+        int leftCellRowLowerCapture = -1;
+        int leftCellColLowerCapture = -1;
+        Cell leftCellLowerCapture;
+
         boolean canMoveLeft = false;
         boolean canMoveRight = false;
         boolean canMoveLeftOther = false;
         boolean canMoveRightOther = false;
+
+        boolean canCaptureLeft = false;
+        boolean canCaptureRight = false;
+        boolean canCaptureRightOther = false;
+        boolean canCaptureLeftOther = false;
 
         ArrayList<Piece> darkPieces = new ArrayList<>();
         ArrayList<Piece> lightPieces = new ArrayList<>();
@@ -5529,7 +5978,7 @@ public class Game extends AppCompatActivity
 
                 if (!piece.isCrowned())
                 {
-                    //2 row and 2 col away
+
                     rightCellRow = piece.getCell().getRow() - 1;
                     rightCellCol = piece.getCell().getCol() + 1;
                     rightCell = board.getCell(rightCellRow, rightCellCol);
@@ -5537,19 +5986,27 @@ public class Game extends AppCompatActivity
                     leftCellCol = piece.getCell().getCol() - 1;
                     leftCell = board.getCell(leftCellRow, leftCellCol);
 
+                    rightCellRowCapture = piece.getCell().getRow() - 2;
+                    rightCellColCapture = piece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+                    leftCellRowCapture = piece.getCell().getRow() - 2;
+                    leftCellColCapture = piece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
 
 
                     if (leftCell != null)
                     {
                         canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        canCaptureLeft = canCapturePiece(piece, leftCellCapture);
                     }
 
                     if (rightCell != null)
                     {
                         canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        canCaptureRight = canCapturePiece(piece, rightCellCapture);
                     }
 
-                    if (canMoveLeft || canMoveRight)
+                    if (canMoveLeft || canMoveRight || canCaptureRight || canCaptureLeft)
                     {
                         //they can still move
                         return false;
@@ -5561,13 +6018,21 @@ public class Game extends AppCompatActivity
                 else
                 {
                     //LOWER
-                    //2 row and 2 col away
+
                     lowerRightCellRow = piece.getCell().getRow() + 1;
                     lowerRightCellCol = piece.getCell().getCol() + 1;
                     lowerRightCell = board.getCell(lowerRightCellRow, lowerRightCellCol);
                     lowerLeftCellRow = piece.getCell().getRow() + 1;
                     lowerLeftCellCol = piece.getCell().getCol() - 1;
                     lowerLeftCell = board.getCell(lowerLeftCellRow, lowerLeftCellCol);
+
+                    rightCellRowLowerCapture = piece.getCell().getRow() - 2;
+                    rightCellColLowerCapture = piece.getCell().getCol() + 2;
+                    rightCellLowerCapture = board.getCell(rightCellRowLowerCapture, rightCellColLowerCapture);
+                    leftCellRowLowerCapture = piece.getCell().getRow() - 2;
+                    leftCellColLowerCapture = piece.getCell().getCol() - 2;
+                    leftCellLowerCapture = board.getCell(leftCellRowLowerCapture, leftCellColLowerCapture);
+
 
                     //UPPER
                     //2 row and 2 col away
@@ -5578,29 +6043,40 @@ public class Game extends AppCompatActivity
                     leftCellCol = piece.getCell().getCol() - 1;
                     leftCell = board.getCell(leftCellRow, leftCellCol);
 
+                    rightCellRowCapture = piece.getCell().getRow() - 2;
+                    rightCellColCapture = piece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+                    leftCellRowCapture = piece.getCell().getRow() - 2;
+                    leftCellColCapture = piece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
 
 
                     if (leftCell != null)
                     {
                         canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        canCaptureLeft = canCapturePiece(piece, leftCellCapture);
                     }
 
                     if (rightCell != null)
                     {
                         canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        canCaptureRight = canCapturePiece(piece, rightCellCapture);
                     }
 
                     if (lowerRightCell != null)
                     {
                         canMoveRightOther = canPieceMove(piece, piece.getCell(), lowerRightCell);
+                        canCaptureRightOther = canCapturePiece(piece, rightCellLowerCapture);
                     }
 
                     if (lowerLeftCell != null)
                     {
                         canMoveLeftOther = canPieceMove(piece, piece.getCell(), lowerLeftCell);
+                        canCaptureLeftOther = canCapturePiece(piece, leftCellLowerCapture);
                     }
 
-                    if (canMoveLeft || canMoveRight || canMoveRightOther || canMoveLeftOther)
+                    if (canMoveLeft || canMoveRight || canMoveRightOther || canMoveLeftOther || canCaptureRightOther || canCaptureLeftOther || canCaptureLeft || canCaptureRight)
                     {
                         //they can still move
                         return false;
@@ -5634,17 +6110,26 @@ public class Game extends AppCompatActivity
                     leftCellCol = piece.getCell().getCol() - 1;
                     leftCell = board.getCell(leftCellRow, leftCellCol);
 
+                    rightCellRowCapture = piece.getCell().getRow() + 2;
+                    rightCellColCapture = piece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+                    leftCellRowCapture = piece.getCell().getRow() + 2;
+                    leftCellColCapture = piece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
                     if (leftCell != null)
                     {
                         canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        canCaptureLeft = canCapturePiece(piece, leftCellCapture);
                     }
 
                     if (rightCell != null)
                     {
                         canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        canCaptureRight = canCapturePiece(piece, rightCellCapture);
                     }
 
-                    if (canMoveLeft || canMoveRight)
+                    if (canMoveLeft || canMoveRight || canCaptureRight || canCaptureLeft)
                     {
                         //they can still move
                         return false;
@@ -5663,6 +6148,14 @@ public class Game extends AppCompatActivity
                     lowerLeftCellCol = piece.getCell().getCol() - 1;
                     lowerLeftCell = board.getCell(lowerLeftCellRow, lowerLeftCellCol);
 
+                    rightCellRowLowerCapture = piece.getCell().getRow() + 2;
+                    rightCellColLowerCapture = piece.getCell().getCol() + 2;
+                    rightCellLowerCapture = board.getCell(rightCellRowLowerCapture, rightCellColLowerCapture);
+                    leftCellRowLowerCapture = piece.getCell().getRow() + 2;
+                    leftCellColLowerCapture = piece.getCell().getCol() - 2;
+                    leftCellLowerCapture = board.getCell(leftCellRowLowerCapture, leftCellColLowerCapture);
+
+
                     //UPPER
 
                     rightCellRow = piece.getCell().getRow() - 1;
@@ -5672,28 +6165,39 @@ public class Game extends AppCompatActivity
                     leftCellCol = piece.getCell().getCol() - 1;
                     leftCell = board.getCell(leftCellRow, leftCellCol);
 
+                    rightCellRowCapture = piece.getCell().getRow() - 2;
+                    rightCellColCapture = piece.getCell().getCol() + 2;
+                    rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+                    leftCellRowCapture = piece.getCell().getRow() - 2;
+                    leftCellColCapture = piece.getCell().getCol() - 2;
+                    leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+
 
                     if (leftCell != null)
                     {
                         canMoveLeft = canPieceMove(piece, piece.getCell(), leftCell);
+                        canCaptureLeft = canCapturePiece(piece, leftCellCapture);
                     }
 
                     if (rightCell != null)
                     {
                         canMoveRight = canPieceMove(piece, piece.getCell(), rightCell);
+                        canCaptureRight = canCapturePiece(piece, rightCellCapture);
                     }
 
                     if (lowerRightCell != null)
                     {
                         canMoveRightOther = canPieceMove(piece, piece.getCell(), lowerRightCell);
+                        canCaptureRightOther = canCapturePiece(piece, rightCellLowerCapture);
                     }
 
                     if (lowerLeftCell != null)
                     {
                         canMoveLeftOther = canPieceMove(piece, piece.getCell(), lowerLeftCell);
+                        canCaptureLeftOther = canCapturePiece(piece, leftCellLowerCapture);
                     }
 
-                    if (canMoveLeft || canMoveRight || canMoveRightOther || canMoveLeftOther)
+                    if (canMoveLeft || canMoveRight || canMoveRightOther || canMoveLeftOther || canCaptureRightOther || canCaptureLeftOther || canCaptureLeft || canCaptureRight)
                     {
                         //they can still move
                         return false;
@@ -5901,6 +6405,7 @@ public class Game extends AppCompatActivity
             {
                 if (!leftCell.containsPiece())
                 {
+                    Cell origin = piece.getCell();
                     piece.animatePiece(piece, piece.getCell(), leftCell, bv);
 
                     currentMove.setFromSquareRowB(piece.getCell().getRow());
@@ -5909,6 +6414,16 @@ public class Game extends AppCompatActivity
                     currentMove.setToSquareColB(leftCell.getCol());
                     currentMove.setTurnNumber(turnCounter);
                     matchMoves.add(currentMove);
+
+                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                    tv_j_uF.setText(String.valueOf(uFrom));
+                    tv_j_uT.setText(String.valueOf(uTo));
+                    tv_j_bF.setText(String.valueOf(bFrom));
+                    tv_j_bT.setText(String.valueOf(bTo));
 
                     currentMove = new Move();
 
@@ -5921,7 +6436,7 @@ public class Game extends AppCompatActivity
                         public void onAnimationEnd(Animator animation) {
                             Log.d("Game: ", "BOT moved from: " + piece.getCell().getRow() + "," + piece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                             //Update board state AFTER animation completes
-                            board.movePiece(piece.getCell().getRow(), piece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                            board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
                             if (crownPiece(piece))
                             {
@@ -5977,6 +6492,100 @@ public class Game extends AppCompatActivity
 
                 }
             }
+
+            if (rightCell != null)
+            {
+                if (!rightCell.containsPiece())
+                {
+                    Cell origin = piece.getCell();
+                    piece.animatePiece(piece, piece.getCell(), rightCell, bv);
+
+                    currentMove.setFromSquareRowB(piece.getCell().getRow());
+                    currentMove.setFromSquareColB(piece.getCell().getCol());
+                    currentMove.setToSquareRowB(rightCell.getRow());
+                    currentMove.setToSquareColB(rightCell.getCol());
+                    currentMove.setTurnNumber(turnCounter);
+                    matchMoves.add(currentMove);
+
+                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                    tv_j_uF.setText(String.valueOf(uFrom));
+                    tv_j_uT.setText(String.valueOf(uTo));
+                    tv_j_bF.setText(String.valueOf(bFrom));
+                    tv_j_bT.setText(String.valueOf(bTo));
+
+                    currentMove = new Move();
+
+                    turnCounter++;
+
+                    Cell finalRightCell = rightCell;
+                    piece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                    {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            Log.d("Game: ", "BOT moved from: " + piece.getCell().getRow() + "," + piece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
+                            //Update board state AFTER animation completes
+                            board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+
+                            if (crownPiece(piece))
+                            {
+                                piece.makeCrowned();
+                            }
+
+                            bv.invalidate();
+
+                            tv_j_userTurn.setVisibility(View.VISIBLE);
+
+
+                            playerTurn = true;
+                            botTurn = false;
+
+                            boolean isStuck = canNoLongerMoveOrNoMorePieces();
+
+                            if (isStuck)
+                            {
+                                timerTask.cancel();
+                                timer.cancel();
+                                tv_j_time.setText(getTimerText());
+                                int rounded = Math.round(time);
+
+                                cons_j_gameOver.setVisibility(View.VISIBLE);
+                                gameOver = true;
+                                tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                Log.d("Game", "GAME OVER");
+
+                                int diffId = 0;
+
+                                if (SessionData.easyModeSelected)
+                                {
+                                    diffId = 1;
+                                }
+                                else
+                                {
+                                    diffId = 2;
+                                }
+
+                                currentMatch.setUsername(SessionData.getSignedInUser().getUsername());
+                                currentMatch.setTime(rounded);
+                                currentMatch.setDifficultyId(diffId);
+                                currentMatch.setResult(tv_j_result.getText().toString());
+                                dbHelper.addNewMatchToDBGivenUsername(SessionData.getSignedInUser().getUsername(), currentMatch, matchMoves);
+                            }
+
+
+                        }
+                    });
+
+                    moveMade = true;
+
+                }
+            }
+
+
         }
 
     }
@@ -6051,9 +6660,9 @@ public class Game extends AppCompatActivity
                     {
                         if (!rightCellUpper.containsPiece())
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCellUpper, false, true, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(rightCellUpper, true, false, "Dark");
 
-                            if (isSafe)
+                            if (!isSafe)
                             {
                                 if (canCapturePiece(leftCell.getPiece(), rightCellUpper))
                                 {
@@ -6068,6 +6677,16 @@ public class Game extends AppCompatActivity
                                     currentMove.setToSquareColB(rightCellUpper.getCol());
                                     currentMove.setTurnNumber(turnCounter);
                                     matchMoves.add(currentMove);
+
+                                    int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                    int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                    int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                    int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                    tv_j_uF.setText(String.valueOf(uFrom));
+                                    tv_j_uT.setText(String.valueOf(uTo));
+                                    tv_j_bF.setText(String.valueOf(bFrom));
+                                    tv_j_bT.setText(String.valueOf(bTo));
 
                                     currentMove = new Move();
 
@@ -6084,7 +6703,7 @@ public class Game extends AppCompatActivity
                                         {
                                             Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCellUpper.getRow() + "," + finalRightCellUpper.getCol());
                                             //Update board state AFTER animation completes
-                                            board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
+                                            board.movePiece(origin.getRow(), origin.getCol(), finalRightCellUpper.getRow(), finalRightCellUpper.getCol());
 
                                             if (capturedPiece != null)
                                             {
@@ -6177,9 +6796,9 @@ public class Game extends AppCompatActivity
                         {
                             if (!leftCellUpper.containsPiece())
                             {
-                                boolean isSafe = isMoveOrCaptureSafe(leftCellUpper, false, true, "Dark");
+                                boolean isSafe = isMoveOrCaptureSafe(leftCellUpper, true, false, "Dark");
 
-                                if (isSafe)
+                                if (!isSafe)
                                 {
                                     if (canCapturePiece(rightCell.getPiece(), leftCellUpper))
                                     {
@@ -6194,6 +6813,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(leftCellUpper.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -6210,7 +6839,7 @@ public class Game extends AppCompatActivity
                                             {
                                                 Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCellUpper.getRow() + "," + finalLeftCellUpper.getCol());
                                                 //Update board state AFTER animation completes
-                                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
+                                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCellUpper.getRow(), finalLeftCellUpper.getCol());
 
                                                 if (capturedPiece != null)
                                                 {
@@ -6304,9 +6933,9 @@ public class Game extends AppCompatActivity
                         {
                             if (!rightCell.containsPiece())
                             {
-                                boolean isSafe = isMoveOrCaptureSafe(rightCell, false, true, "Dark");
+                                boolean isSafe = isMoveOrCaptureSafe(rightCell, true, false, "Dark");
 
-                                if (isSafe)
+                                if (!isSafe)
                                 {
                                     if (canCapturePiece(leftCellUpper.getPiece(), rightCell))
                                     {
@@ -6321,6 +6950,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(rightCell.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -6337,7 +6976,7 @@ public class Game extends AppCompatActivity
                                             {
                                                 Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalRightCell.getRow() + "," + finalRightCell.getCol());
                                                 //Update board state AFTER animation completes
-                                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalRightCell.getRow(), finalRightCell.getCol());
+                                                board.movePiece(origin.getRow(), origin.getCol(), finalRightCell.getRow(), finalRightCell.getCol());
 
                                                 if (capturedPiece != null)
                                                 {
@@ -6431,9 +7070,9 @@ public class Game extends AppCompatActivity
                         {
                             if (!leftCell.containsPiece())
                             {
-                                boolean isSafe = isMoveOrCaptureSafe(leftCell, false, true, "Dark");
+                                boolean isSafe = isMoveOrCaptureSafe(leftCell, true, false, "Dark");
 
-                                if (isSafe)
+                                if (!isSafe)
                                 {
                                     if (canCapturePiece(rightCellUpper.getPiece(), leftCell))
                                     {
@@ -6448,6 +7087,16 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(leftCell.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
+
+                                        int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
+                                        int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
+                                        int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
+                                        int bTo = getSquareNumber(currentMove.getToSquareRowB(), currentMove.getToSquareColB());
+
+                                        tv_j_uF.setText(String.valueOf(uFrom));
+                                        tv_j_uT.setText(String.valueOf(uTo));
+                                        tv_j_bF.setText(String.valueOf(bFrom));
+                                        tv_j_bT.setText(String.valueOf(bTo));
 
                                         currentMove = new Move();
 
@@ -6464,7 +7113,7 @@ public class Game extends AppCompatActivity
                                             {
                                                 Log.d("Game: ", "BOT moved from: " + botPiece.getCell().getRow() + "," + botPiece.getCell().getCol() + ", to: " + finalLeftCell.getRow() + "," + finalLeftCell.getCol());
                                                 //Update board state AFTER animation completes
-                                                board.movePiece(botPiece.getCell().getRow(), botPiece.getCell().getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
+                                                board.movePiece(origin.getRow(), origin.getCol(), finalLeftCell.getRow(), finalLeftCell.getCol());
 
                                                 if (capturedPiece != null)
                                                 {
@@ -6558,8 +7207,6 @@ public class Game extends AppCompatActivity
     }
 
 
-
-    //turns are still somehow being counted wrong. Always either an extra or too little
 
 
 }

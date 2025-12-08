@@ -50,6 +50,7 @@ public class Profile extends AppCompatActivity
         });
 
         dbHelper = new DatabaseHelper(this);
+        dbHelper.calculateMatchPoints();
 
         tv_j_username = findViewById(R.id.tv_v_profile_username);
         tv_j_fname = findViewById(R.id.tv_v_profile_fname);
@@ -102,6 +103,7 @@ public class Profile extends AppCompatActivity
     {
         if (!SessionData.cantEditOrDeleteAccount)
         {
+
             tv_j_username.setText(SessionData.getSignedInUser().getUsername());
             tv_j_fname.setText(SessionData.getSignedInUser().getFname());
             tv_j_lname.setText(SessionData.getSignedInUser().getLname());
@@ -114,6 +116,7 @@ public class Profile extends AppCompatActivity
         }
         else
         {
+
             dbHelper.getAllUserDataGivenUsername(SessionData.getSelectedUser().getUsername());
 
             tv_j_username.setText(SessionData.getSelectedUser().getUsername());

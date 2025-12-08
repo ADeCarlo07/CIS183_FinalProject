@@ -37,6 +37,8 @@ public class HomePage extends AppCompatActivity
 
         dbHelper = new DatabaseHelper(this);
 
+
+
         tv_j_welcome = findViewById(R.id.tv_v_home_welcome);
         btn_j_easyMode = findViewById(R.id.btn_v_home_easyMode);
         btn_j_intermediateMode = findViewById(R.id.btn_v_home_intermediateMode);
@@ -71,6 +73,7 @@ public class HomePage extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
+
                 SessionData.cantEditOrDeleteAccount = false;
                 startActivity(new Intent(HomePage.this, Profile.class));
             }

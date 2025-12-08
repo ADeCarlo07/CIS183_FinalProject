@@ -236,6 +236,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     public User getAllUserDataGivenUsername(String username)
     {
+
         User selectedUser = new User();
         boolean isUserExisting;
 
@@ -521,6 +522,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     public void addNewMatchToDBGivenUsername(String username, Match match, ArrayList<Move> moves)
     {
+
         SQLiteDatabase db = this.getWritableDatabase();
         String createStatement = "INSERT INTO " + matches_table_name + " (username, result, difficultyId, time) VALUES('" + username + "', '" + match.getResult() + "', " + match.getDifficultyId() + ", " + match.getTime() + ");";
 
@@ -621,9 +623,13 @@ public class DatabaseHelper extends SQLiteOpenHelper
             }
 
 
-
+            if (user.getUsername().equals(SessionData.getSignedInUser().getUsername()))
+            {
+                SessionData.getSignedInUser().setNumPoints(totalPoints);
+            }
             String updateNumberOfPoints = "UPDATE " + users_table_name + " SET numPoints = " + totalPoints + " WHERE username = '" + user.getUsername() + "';";
             dbWriteable.execSQL(updateNumberOfPoints);
+
 
             listOfMatches = new ArrayList<>();
             totalPoints = 0;
