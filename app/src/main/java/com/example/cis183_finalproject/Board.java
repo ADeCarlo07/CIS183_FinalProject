@@ -52,6 +52,41 @@ public class Board
         return selectedPiece;
     }
 
+    public Board clone()
+    {
+        Board newBoard = new Board();
+
+        for (int row = 0; row < 8; row++)
+        {
+            for (int col = 0; col < 8; col++)
+            {
+
+                Cell originalCell = this.getCell(row, col);
+                Cell newCell = newBoard.getCell(row, col);
+
+                if (originalCell.containsPiece())
+                {
+                    Piece originalPiece = originalCell.getPiece();
+
+                    Piece newPiece = new Piece(originalPiece.getColor());
+                    if (originalPiece.isCrowned())
+                    {
+
+                        newPiece.makeCrowned();
+                    }
+
+                    newCell.placePiece(newPiece);
+                }
+                else
+                {
+                    newCell.removePiece();
+                }
+            }
+        }
+
+        return newBoard;
+    }
+
 
 
     public void movePiece(int fromRow, int fromCol, int toRow, int toCol)

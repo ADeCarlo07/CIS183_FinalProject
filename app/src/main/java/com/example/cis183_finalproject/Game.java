@@ -90,6 +90,8 @@ public class Game extends AppCompatActivity
     TextView tv_j_bT;
     TextView tv_j_bF;
 
+    boolean isAnimating = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -821,7 +823,7 @@ public class Game extends AppCompatActivity
         }
     }
 
-    private boolean isMoveOrCaptureSafe(Cell potenialTo, boolean goingToMove, boolean goingToCapture, String color)
+    private boolean isMoveOrCaptureSafe(Piece piece, Cell potenialTo, boolean goingToMove, boolean goingToCapture, String color)
     {
         int rightCellRow = -1;
         int rightCellCol = -1;
@@ -870,21 +872,32 @@ public class Game extends AppCompatActivity
         int leftCellColUpper = -1;
         Cell leftCellUpper;
 
+        int lowerLeftCellRow = -1;
+        int lowerLeftCellCol = -1;
+        Cell lowerLeftCell;
+
+        int lowerRightCellRow = -1;
+        int lowerRightCellCol = -1;
+        Cell lowerRightCell;
+
+
+        Board tempBoard = board.clone();
+
         //UPPER
         //2 row and 2 col away
         rightCellRowUpperCapture = potenialTo.getRow() - 2;
         rightCellColUpperCapture = potenialTo.getCol() + 2;
-        rightCellUpperCapture = board.getCell(rightCellRowUpperCapture, rightCellColUpperCapture);
+        rightCellUpperCapture = tempBoard.getCell(rightCellRowUpperCapture, rightCellColUpperCapture);
         leftCellRowUpperCapture = potenialTo.getRow() - 2;
         leftCellColUpperCapture = potenialTo.getCol() - 2;
-        leftCellUpperCapture = board.getCell(leftCellRowUpperCapture, leftCellColUpperCapture);
+        leftCellUpperCapture = tempBoard.getCell(leftCellRowUpperCapture, leftCellColUpperCapture);
 
         //capture check upper
         if (rightCellUpperCapture != null)
         {
             rightCellRowUpperCC = rightCellUpperCapture.getRow() - 1;
             rightCellColUpperCC = rightCellUpperCapture.getCol() + 1;
-            rightCellUpperCC = board.getCell(rightCellRowUpperCC, rightCellColUpperCC);
+            rightCellUpperCC = tempBoard.getCell(rightCellRowUpperCC, rightCellColUpperCC);
         }
         else
         {
@@ -895,7 +908,7 @@ public class Game extends AppCompatActivity
         {
             leftCellRowUpperCC = leftCellUpperCapture.getRow() - 1;
             leftCellColUpperCC = leftCellUpperCapture.getCol() - 1;
-            leftCellUpperCC = board.getCell(leftCellRowUpperCC, leftCellColUpperCC);
+            leftCellUpperCC = tempBoard.getCell(leftCellRowUpperCC, leftCellColUpperCC);
         }
         else
         {
@@ -905,28 +918,28 @@ public class Game extends AppCompatActivity
         //1 row and 1 col away
         rightCellRowUpper = potenialTo.getRow() - 1;
         rightCellColUpper = potenialTo.getCol() + 1;
-        rightCellUpper = board.getCell(rightCellRowUpper, rightCellColUpper);
+        rightCellUpper = tempBoard.getCell(rightCellRowUpper, rightCellColUpper);
         leftCellRowUpper = potenialTo.getRow() - 1;
         leftCellColUpper = potenialTo.getCol() - 1;
-        leftCellUpper = board.getCell(leftCellRowUpper, leftCellColUpper);
+        leftCellUpper = tempBoard.getCell(leftCellRowUpper, leftCellColUpper);
 
 
         //LOWER
         //2 rows and 2 cols away
         rightCellRowCapture = potenialTo.getRow() + 2;
         rightCellColCapture = potenialTo.getCol() + 2;
-        rightCellCapture = board.getCell(rightCellRowCapture, rightCellColCapture);
+        rightCellCapture = tempBoard.getCell(rightCellRowCapture, rightCellColCapture);
 
         leftCellRowCapture = potenialTo.getRow() + 2;
         leftCellColCapture = potenialTo.getCol() - 2;
-        leftCellCapture = board.getCell(leftCellRowCapture, leftCellColCapture);
+        leftCellCapture = tempBoard.getCell(leftCellRowCapture, leftCellColCapture);
 
         //capture check lower
         if (rightCellCapture != null)
         {
             rightCellRowCC = rightCellCapture.getRow() + 1;
             rightCellColCC = rightCellCapture.getCol() + 1;
-            rightCellCC = board.getCell(rightCellRowCC, rightCellColCC);
+            rightCellCC = tempBoard.getCell(rightCellRowCC, rightCellColCC);
         }
         else
         {
@@ -937,7 +950,7 @@ public class Game extends AppCompatActivity
         {
             leftCellRowCC = leftCellCapture.getRow() + 1;
             leftCellColCC = leftCellCapture.getCol() - 1;
-            leftCellCC = board.getCell(leftCellRowCC, leftCellColCC);
+            leftCellCC = tempBoard.getCell(leftCellRowCC, leftCellColCC);
         }
         else
         {
@@ -948,11 +961,14 @@ public class Game extends AppCompatActivity
         //1 row and 1 col away
         rightCellRow = potenialTo.getRow() + 1;
         rightCellCol = potenialTo.getCol() + 1;
-        rightCell = board.getCell(rightCellRow, rightCellCol);
+        rightCell = tempBoard.getCell(rightCellRow, rightCellCol);
 
         leftCellRow = potenialTo.getRow() + 1;
         leftCellCol = potenialTo.getCol() - 1;
-        leftCell = board.getCell(leftCellRow, leftCellCol);
+        leftCell = tempBoard.getCell(leftCellRow, leftCellCol);
+
+
+
 
         if (goingToMove)
         {
@@ -981,8 +997,12 @@ public class Game extends AppCompatActivity
                             return false;
                         }
                     }
+
+
                 }
+
             }
+
 
             if (rightCell != null)
             {
@@ -996,96 +1016,132 @@ public class Game extends AppCompatActivity
                         }
                     }
 
+
                 }
+
 
             }
 
-            if (rightCellUpper != null)
+            //reminder: ensure fixes below work
+            if (piece.isCrowned())
             {
-                if (rightCellUpper.containsPiece() && !rightCellUpper.getPiece().getColor().equals(color))
+
+                if (rightCellUpper != null && rightCellUpper.containsPiece() && !rightCellUpper.getPiece().getColor().equals(color))
                 {
-                    if (leftCell != null)
+
+                    if (leftCell != null && !leftCell.containsPiece())
                     {
-                        if (!leftCell.containsPiece())
-                        {
-                            return false;
-                        }
+                        return false;
                     }
+
+                }
+
+
+                if (leftCellUpper != null && leftCellUpper.containsPiece() && !leftCellUpper.getPiece().getColor().equals(color))
+                {
+
+                    if (rightCell != null && !rightCell.containsPiece())
+                    {
+                        return false;
+                    }
+
                 }
             }
 
-            if (leftCellUpper != null)
-            {
-                if (leftCellUpper.containsPiece() && !leftCellUpper.getPiece().getColor().equals(color))
-                {
-                    if (rightCell != null)
-                    {
-                        if (!rightCell.containsPiece())
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
+
+
         }
 
         if (goingToCapture)
         {
-            if (leftCellCC != null)
+            //some tears were shed making this
+
+            Cell originalCell = piece.getCell();
+            int r = originalCell.getRow();
+            int c = originalCell.getCol();
+
+            Cell cloneBotCell = tempBoard.getCell(r, c);
+
+            //first remove the piece to be captured from tempBoard
+            if (leftCell != null && leftCell.containsPiece() && !leftCell.getPiece().getColor().equals(color))
             {
-                if (leftCellCC.containsPiece() && !leftCellCC.getPiece().getColor().equals(color))
+
+                if (leftCellCapture != null && leftCellCapture.containsPiece() && leftCellCapture.getPiece().getColor().equals(color) && leftCellCapture == cloneBotCell)
                 {
-                    if (rightCellUpperCC != null)
-                    {
-                        if (!rightCellUpperCC.containsPiece())
-                        {
-                            return false;
-                        }
-                    }
+                    leftCell.removePiece();
+                }
+            }
+            if (rightCell != null && rightCell.containsPiece() && !rightCell.getPiece().getColor().equals(color))
+            {
+                if (rightCellCapture != null && rightCellCapture.containsPiece() && rightCellCapture.getPiece().getColor().equals(color) && rightCellCapture == cloneBotCell)
+                {
+                    rightCell.removePiece();
+                }
+
+            }
+            if (leftCellUpper != null && leftCellUpper.containsPiece() && !leftCellUpper.getPiece().getColor().equals(color))
+            {
+                if (leftCellUpperCapture != null && leftCellUpperCapture.containsPiece() && leftCellUpperCapture.getPiece().getColor().equals(color) && leftCellUpperCapture == cloneBotCell)
+                {
+                    leftCellUpper.removePiece();
+                }
+
+            }
+
+            if (rightCellUpper != null && rightCellUpper.containsPiece() && !rightCellUpper.getPiece().getColor().equals(color))
+            {
+                if (rightCellUpperCapture != null && rightCellUpperCapture.containsPiece() && rightCellUpperCapture.getPiece().getColor().equals(color) && rightCellUpperCapture == cloneBotCell)
+                {
+                    rightCellUpper.removePiece();
                 }
             }
 
-            if (rightCellCC != null)
+
+
+            //then safety check
+            if (leftCell != null && leftCell.containsPiece() && !leftCell.getPiece().getColor().equals(color))
             {
-                if (rightCellCC.containsPiece() && !rightCellCC.getPiece().getColor().equals(color))
+
+                if (rightCellUpper != null && !rightCellUpper.containsPiece())
                 {
-                    if (leftCellUpperCC != null)
-                    {
-                        if (!leftCellUpperCC.containsPiece())
-                        {
-                            return false;
-                        }
-                    }
+                    return false;
+                }
+
+            }
+
+            if (rightCell != null && rightCell.containsPiece() && !rightCell.getPiece().getColor().equals(color))
+            {
+                if (leftCellUpper != null && !leftCellUpper.containsPiece())
+                {
+                    return false;
                 }
             }
 
-            if (leftCellUpperCC != null)
+            if (piece.isCrowned())
             {
-                if (leftCellUpperCC.containsPiece() && !leftCellUpperCC.getPiece().getColor().equals(color))
+
+                if (leftCellUpper != null && leftCellUpper.containsPiece() && !leftCellUpper.getPiece().getColor().equals(color))
                 {
-                    if (rightCellCC != null)
+
+                    if (rightCell != null && !rightCell.containsPiece())
                     {
-                        if (!rightCellCC.containsPiece())
-                        {
-                            return false;
-                        }
+                        return false;
                     }
+
+                }
+
+                if (rightCellUpper != null && rightCellUpper.containsPiece() && !rightCellUpper.getPiece().getColor().equals(color))
+                {
+
+                    if (leftCell != null && !leftCell.containsPiece())
+                    {
+                        return false;
+                    }
+
                 }
             }
 
-            if (rightCellUpperCC != null)
-            {
-                if (rightCellUpperCC.containsPiece() && !rightCellUpperCC.getPiece().getColor().equals(color))
-                {
-                    if (leftCellCC != null)
-                    {
-                        if (!leftCellCC.containsPiece())
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
+
         }
 
         //if it makes it to here, it is safe
@@ -1324,7 +1380,7 @@ public class Game extends AppCompatActivity
 
                     if (canCaptureAndMoveLeft)
                     {
-                        boolean isSafe = isMoveOrCaptureSafe(leftCellCapture, false, true, "Dark");
+                        boolean isSafe = isMoveOrCaptureSafe(botPiece, leftCellCapture, false, true, "Dark");
 
                         if (isSafe)
                         {
@@ -1345,7 +1401,7 @@ public class Game extends AppCompatActivity
 
                         if (canCaptureAndMoveRight)
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCellCapture, false, true, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(botPiece, rightCellCapture, false, true, "Dark");
 
                             if (isSafe)
                             {
@@ -1368,7 +1424,7 @@ public class Game extends AppCompatActivity
 
                         if (canMoveRight)
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCell, true, false, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(botPiece, rightCell, true, false, "Dark");
 
                             if (isSafe)
                             {
@@ -1382,7 +1438,7 @@ public class Game extends AppCompatActivity
                     }
                     else
                     {
-                        boolean isSafe = isMoveOrCaptureSafe(leftCell, true, false, "Dark");
+                        boolean isSafe = isMoveOrCaptureSafe(botPiece, leftCell, true, false, "Dark");
 
                         if (isSafe)
                         {
@@ -1466,7 +1522,7 @@ public class Game extends AppCompatActivity
                     if (canCaptureAndMoveLeft)
                     {
 
-                        boolean isSafe = isMoveOrCaptureSafe(leftCellCapture, false, true, "Dark");
+                        boolean isSafe = isMoveOrCaptureSafe(botPiece, leftCellCapture, false, true, "Dark");
 
                         if (isSafe)
                         {
@@ -1480,7 +1536,7 @@ public class Game extends AppCompatActivity
                     }
                     else if (canCaptureAndMoveLeftUp)
                     {
-                        boolean isSafe = isMoveOrCaptureSafe(leftCellUpperCapture, false, true, "Dark");
+                        boolean isSafe = isMoveOrCaptureSafe(botPiece, leftCellUpperCapture, false, true, "Dark");
 
                         if (isSafe)
                         {
@@ -1505,7 +1561,7 @@ public class Game extends AppCompatActivity
 
                         if (canCaptureAndMoveRight)
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCellCapture, false, true, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(botPiece, rightCellCapture, false, true, "Dark");
 
                             if (isSafe)
                             {
@@ -1518,7 +1574,7 @@ public class Game extends AppCompatActivity
                         }
                         else if (canCaptureAndMoveRightUp)
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCellUpperCapture, false, true, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(botPiece, rightCellUpperCapture, false, true, "Dark");
 
                             if (isSafe)
                             {
@@ -1546,7 +1602,7 @@ public class Game extends AppCompatActivity
 
                         if (canMoveRight)
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCell, true, false, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(botPiece, rightCell, true, false, "Dark");
 
                             if (isSafe)
                             {
@@ -1559,7 +1615,7 @@ public class Game extends AppCompatActivity
                         }
                         else if (canMoveRightUp)
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCellUpper, true, false, "Dark");
+                            boolean isSafe = isMoveOrCaptureSafe(botPiece, rightCellUpper, true, false, "Dark");
 
                             if (isSafe)
                             {
@@ -1573,7 +1629,7 @@ public class Game extends AppCompatActivity
                     }
                     else if (canMoveLeftUp)
                     {
-                        boolean isSafe = isMoveOrCaptureSafe(leftCellUpper, true, false, "Dark");
+                        boolean isSafe = isMoveOrCaptureSafe(botPiece, leftCellUpper, true, false, "Dark");
 
                         if (isSafe)
                         {
@@ -1586,7 +1642,7 @@ public class Game extends AppCompatActivity
                     }
                     else
                     {
-                        boolean isSafe = isMoveOrCaptureSafe(leftCell, true, false, "Dark");
+                        boolean isSafe = isMoveOrCaptureSafe(botPiece, leftCell, true, false, "Dark");
 
                         if (isSafe)
                         {
@@ -5577,277 +5633,308 @@ public class Game extends AppCompatActivity
             public void onCellClicked(int row, int col)
             {
 
+                if (isAnimating)
+                {
+                    return;
+                }
                 bv.invalidate();
                 Cell cell = board.getCell(row, col);
 
-                if (playerTurn)
+                try
                 {
-                    if (!canSelectMoveCell)
+                    if (playerTurn)
                     {
+                        if (!canSelectMoveCell)
+                        {
 
-                        if (cell.containsPiece() && cell.getPiece().getColor().equals("Light"))
-                        {
-                            bv.drawSelectionRing(cell.getCol(), cell.getRow());
-                            currentPiece = cell.getPiece();
-                            from = cell;
-                            canSelectMoveCell = true;
-                            Log.d("Game", "Selected piece at: " + from.getRow() + "," + from.getCol());
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            to = cell;
-                            if (from != null && currentPiece != null && to != null)
+                            if (cell.containsPiece() && cell.getPiece().getColor().equals("Light"))
                             {
-                                boolean canMove = canPieceMove(currentPiece, from, to);
-                                boolean canCaptureAndMove = canCapturePiece(currentPiece, to);
-
-                                if (canCaptureAndMove && capturedPiece != null)
+                                bv.drawSelectionRing(cell.getCol(), cell.getRow());
+                                currentPiece = cell.getPiece();
+                                from = cell;
+                                canSelectMoveCell = true;
+                                Log.d("Game", "Selected piece at: " + from.getRow() + "," + from.getCol());
+                            }
+                            return;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                to = cell;
+                                if (from != null && currentPiece != null && to != null)
                                 {
-                                    bv.removeSelectionRing();
-                                    currentPiece.animatePiece(currentPiece, from, to, bv);
+                                    boolean canMove = canPieceMove(currentPiece, from, to);
+                                    boolean canCaptureAndMove = canCapturePiece(currentPiece, to);
 
-                                    currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                                    if (canCaptureAndMove && capturedPiece != null)
                                     {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation)
+                                        bv.removeSelectionRing();
+                                        isAnimating = true;
+                                        currentPiece.animatePiece(currentPiece, from, to, bv);
+
+                                        currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
                                         {
-                                            Log.d("Game: ", "attempting to capture");
-                                            //Update board state AFTER animation completes
-                                            board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
-
-                                            if (crownPiece(currentPiece) && !currentPiece.isCrowned())
+                                            @Override
+                                            public void onAnimationEnd(Animator animation)
                                             {
-                                                currentPiece.makeCrowned();
-                                            }
-
-                                            bv.invalidate();
-
-                                            playerTurn = true;
-                                            botTurn = false;
-
-                                            board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
-                                            capturedPiece.getCell().removePiece();
-                                            capturedPiece = null;
-
-                                            chainStarted = true;
-
-                                            bv.invalidate();
-
-                                            //Keep piece selected at new location
-                                            Cell originalFrom = from;
-                                            from = to;
-                                            currentPiece = from.getPiece();
-
-
-
-                                            ArrayList<Cell> possibleCells = isAnotherCaptureAvailable(currentPiece);
-
-                                            if (!possibleCells.isEmpty())
-                                            {
-                                                for(Cell pCell : possibleCells)
+                                                try
                                                 {
-                                                    if (canCapturePiece(currentPiece, pCell))
+
+                                                    Log.d("Game: ", "attempting to capture");
+                                                    //Update board state AFTER animation completes
+                                                    board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+
+                                                    if (crownPiece(currentPiece) && !currentPiece.isCrowned())
                                                     {
-                                                        bv.drawSelectionRing(currentPiece.getCell().getCol(), currentPiece.getCell().getRow());
-                                                        tv_j_captureAlert.setVisibility(View.VISIBLE);
-                                                        canSelectMoveCell = true;
-                                                        Log.d("Game", "Another capture available!");
-                                                        playerTurn = true;
-                                                        botTurn = false;
-
-
+                                                        currentPiece.makeCrowned();
                                                     }
 
-                                                }
-                                            }
-                                            else
-                                            {
-                                                bv.removeSelectionRing();
-                                                chainStarted = false;
-                                                currentMove.setFromSquareRowU(originalFrom.getRow());
-                                                currentMove.setFromSquareColU(originalFrom.getCol());
-                                                currentMove.setToSquareRowU(to.getRow());
-                                                currentMove.setToSquareColU(to.getCol());
+                                                    bv.invalidate();
 
-                                                if (crownPiece(currentPiece) && !currentPiece.isCrowned())
-                                                {
-                                                    currentPiece.makeCrowned();
-                                                }
+                                                    playerTurn = true;
+                                                    botTurn = false;
 
-                                                //No more captures, end turn
-                                                from = null;
-                                                currentPiece = null;
-                                                canSelectMoveCell = false;
-                                                playerTurn = false;
-                                                botTurn = true;
 
-                                                tv_j_userTurn.setVisibility(View.INVISIBLE);
-                                                tv_j_captureAlert.setVisibility(View.INVISIBLE);
+                                                    capturedPiece.getCell().removePiece();
+                                                    capturedPiece = null;
 
-                                                boolean isStuck = canNoLongerMoveOrNoMorePieces();
+                                                    chainStarted = true;
 
-                                                if (isStuck)
-                                                {
-                                                    timerTask.cancel();
-                                                    timer.cancel();
-                                                    tv_j_time.setText(getTimerText());
-                                                    int rounded = Math.round(time);
+                                                    bv.invalidate();
 
-                                                    cons_j_gameOver.setVisibility(View.VISIBLE);
-                                                    gameOver = true;
-                                                    tv_j_numTurns.setText(String.valueOf(turnCounter));
+                                                    //Keep piece selected at new location
+                                                    Cell originalFrom = from;
+                                                    from = to;
+                                                    currentPiece = from.getPiece();
 
-                                                    Log.d("Game", "GAME OVER");
 
-                                                    int diffId = 0;
 
-                                                    if (SessionData.easyModeSelected)
+                                                    ArrayList<Cell> possibleCells = isAnotherCaptureAvailable(currentPiece);
+
+                                                    if (!possibleCells.isEmpty())
                                                     {
-                                                        diffId = 1;
+                                                        for(Cell pCell : possibleCells)
+                                                        {
+                                                            if (canCapturePiece(currentPiece, pCell))
+                                                            {
+                                                                bv.drawSelectionRing(currentPiece.getCell().getCol(), currentPiece.getCell().getRow());
+                                                                tv_j_captureAlert.setVisibility(View.VISIBLE);
+                                                                canSelectMoveCell = true;
+                                                                Log.d("Game", "Another capture available!");
+                                                                playerTurn = true;
+                                                                botTurn = false;
+
+
+                                                            }
+
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        diffId = 2;
+                                                        bv.removeSelectionRing();
+                                                        chainStarted = false;
+                                                        currentMove.setFromSquareRowU(originalFrom.getRow());
+                                                        currentMove.setFromSquareColU(originalFrom.getCol());
+                                                        currentMove.setToSquareRowU(to.getRow());
+                                                        currentMove.setToSquareColU(to.getCol());
+
+                                                        if (crownPiece(currentPiece) && !currentPiece.isCrowned())
+                                                        {
+                                                            currentPiece.makeCrowned();
+                                                        }
+
+                                                        //No more captures, end turn
+                                                        from = null;
+                                                        currentPiece = null;
+                                                        canSelectMoveCell = false;
+                                                        playerTurn = false;
+                                                        botTurn = true;
+
+                                                        tv_j_userTurn.setVisibility(View.INVISIBLE);
+                                                        tv_j_captureAlert.setVisibility(View.INVISIBLE);
+
+                                                        boolean isStuck = canNoLongerMoveOrNoMorePieces();
+
+                                                        if (isStuck)
+                                                        {
+                                                            timerTask.cancel();
+                                                            timer.cancel();
+                                                            tv_j_time.setText(getTimerText());
+                                                            int rounded = Math.round(time);
+
+                                                            cons_j_gameOver.setVisibility(View.VISIBLE);
+                                                            gameOver = true;
+                                                            tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                                            Log.d("Game", "GAME OVER");
+
+                                                            int diffId = 0;
+
+                                                            if (SessionData.easyModeSelected)
+                                                            {
+                                                                diffId = 1;
+                                                            }
+                                                            else
+                                                            {
+                                                                diffId = 2;
+                                                            }
+
+                                                            currentMatch.setUsername(SessionData.getSignedInUser().getUsername());
+                                                            currentMatch.setTime(rounded);
+                                                            currentMatch.setDifficultyId(diffId);
+                                                            currentMatch.setResult(tv_j_result.getText().toString());
+                                                            dbHelper.addNewMatchToDBGivenUsername(SessionData.getSignedInUser().getUsername(), currentMatch, matchMoves);
+                                                        }
+
+                                                        if (SessionData.easyModeSelected)
+                                                        {
+                                                            easyDifficultyBotTurn();
+                                                        }
+                                                        else
+                                                        {
+                                                            intermediateDifficultyBotTurn();
+                                                        }
+
+                                                    }
+                                                }
+                                                finally
+                                                {
+                                                    isAnimating = false;
+                                                }
+
+
+                                            }
+                                        });
+
+
+
+                                        return;
+
+
+                                    }
+
+                                    if (canMove && !chainStarted)
+                                    {
+                                        bv.removeSelectionRing();
+                                        currentPiece.animatePiece(currentPiece, from, to, bv);
+                                        isAnimating = true;
+
+
+
+                                        currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                                        {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation)
+                                            {
+                                                try
+                                                {
+                                                    //public void movePiece(int fromRow, int fromCol, int toRow, int toCol)
+                                                    board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+
+                                                    currentMove.setFromSquareRowU(from.getRow());
+                                                    currentMove.setFromSquareColU(from.getCol());
+                                                    currentMove.setToSquareRowU(to.getRow());
+                                                    currentMove.setToSquareColU(to.getCol());
+
+                                                    Log.d("Game: ", "moved from: " + from.getRow() + "," + from.getCol() + ", to: " + to.getRow() + "," + to.getCol());
+
+                                                    if (crownPiece(currentPiece) && !currentPiece.isCrowned())
+                                                    {
+                                                        currentPiece.makeCrowned();
                                                     }
 
-                                                    currentMatch.setUsername(SessionData.getSignedInUser().getUsername());
-                                                    currentMatch.setTime(rounded);
-                                                    currentMatch.setDifficultyId(diffId);
-                                                    currentMatch.setResult(tv_j_result.getText().toString());
-                                                    dbHelper.addNewMatchToDBGivenUsername(SessionData.getSignedInUser().getUsername(), currentMatch, matchMoves);
+                                                    from = null;
+                                                    to = null;
+                                                    currentPiece = null;
+                                                    canSelectMoveCell = false;
+                                                    bv.invalidate();
+                                                    playerTurn = false;
+                                                    botTurn = true;
+
+
+                                                    tv_j_userTurn.setVisibility(View.INVISIBLE);
+                                                    tv_j_captureAlert.setVisibility(View.INVISIBLE);
+
+                                                    boolean isStuck = canNoLongerMoveOrNoMorePieces();
+
+                                                    if (isStuck)
+                                                    {
+                                                        timerTask.cancel();
+                                                        timer.cancel();
+                                                        tv_j_time.setText(getTimerText());
+                                                        int rounded = Math.round(time);
+
+                                                        cons_j_gameOver.setVisibility(View.VISIBLE);
+                                                        gameOver = true;
+                                                        tv_j_numTurns.setText(String.valueOf(turnCounter));
+
+                                                        Log.d("Game", "GAME OVER");
+
+                                                        int diffId = 0;
+
+                                                        if (SessionData.easyModeSelected)
+                                                        {
+                                                            diffId = 1;
+                                                        }
+                                                        else
+                                                        {
+                                                            diffId = 2;
+                                                        }
+
+                                                        currentMatch.setUsername(SessionData.getSignedInUser().getUsername());
+                                                        currentMatch.setTime(rounded);
+                                                        currentMatch.setDifficultyId(diffId);
+                                                        currentMatch.setResult(tv_j_result.getText().toString());
+                                                        dbHelper.addNewMatchToDBGivenUsername(SessionData.getSignedInUser().getUsername(), currentMatch, matchMoves);
+                                                    }
+
+
+                                                    if (SessionData.easyModeSelected)
+                                                    {
+                                                        easyDifficultyBotTurn();
+                                                    }
+                                                    else
+                                                    {
+                                                        intermediateDifficultyBotTurn();
+                                                    }
+                                                }
+                                                finally
+                                                {
+                                                    isAnimating = false;
                                                 }
 
-                                                if (SessionData.easyModeSelected)
-                                                {
-                                                    easyDifficultyBotTurn();
-                                                }
-                                                else
-                                                {
-                                                    intermediateDifficultyBotTurn();
-                                                }
 
                                             }
+                                        });
 
-                                        }
-                                    });
-
-
-
-                                    return;
-
-
-                                }
-
-                                if (canMove && !chainStarted)
-                                {
-                                    bv.removeSelectionRing();
-                                    currentPiece.animatePiece(currentPiece, from, to, bv);
-
-
-
-
-                                    currentPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
+                                    }
+                                    else
                                     {
-                                        @Override
-                                        public void onAnimationEnd(Animator animation)
-                                        {
-                                            //public void movePiece(int fromRow, int fromCol, int toRow, int toCol)
-                                            board.movePiece(from.getRow(), from.getCol(), to.getRow(), to.getCol());
+                                        bv.removeSelectionRing();
+                                        from = null;
+                                        to = null;
+                                        currentPiece = null;
+                                        canSelectMoveCell = false;
+                                        playerTurn = true;
 
-                                            currentMove.setFromSquareRowU(from.getRow());
-                                            currentMove.setFromSquareColU(from.getCol());
-                                            currentMove.setToSquareRowU(to.getRow());
-                                            currentMove.setToSquareColU(to.getCol());
-
-                                            Log.d("Game: ", "moved from: " + from.getRow() + "," + from.getCol() + ", to: " + to.getRow() + "," + to.getCol());
-
-                                            if (crownPiece(currentPiece) && !currentPiece.isCrowned())
-                                            {
-                                                currentPiece.makeCrowned();
-                                            }
-
-                                            from = null;
-                                            to = null;
-                                            currentPiece = null;
-                                            canSelectMoveCell = false;
-                                            bv.invalidate();
-                                            playerTurn = false;
-                                            botTurn = true;
-
-
-                                            tv_j_userTurn.setVisibility(View.INVISIBLE);
-                                            tv_j_captureAlert.setVisibility(View.INVISIBLE);
-
-                                            boolean isStuck = canNoLongerMoveOrNoMorePieces();
-
-                                            if (isStuck)
-                                            {
-                                                timerTask.cancel();
-                                                timer.cancel();
-                                                tv_j_time.setText(getTimerText());
-                                                int rounded = Math.round(time);
-
-                                                cons_j_gameOver.setVisibility(View.VISIBLE);
-                                                gameOver = true;
-                                                tv_j_numTurns.setText(String.valueOf(turnCounter));
-
-                                                Log.d("Game", "GAME OVER");
-
-                                                int diffId = 0;
-
-                                                if (SessionData.easyModeSelected)
-                                                {
-                                                    diffId = 1;
-                                                }
-                                                else
-                                                {
-                                                    diffId = 2;
-                                                }
-
-                                                currentMatch.setUsername(SessionData.getSignedInUser().getUsername());
-                                                currentMatch.setTime(rounded);
-                                                currentMatch.setDifficultyId(diffId);
-                                                currentMatch.setResult(tv_j_result.getText().toString());
-                                                dbHelper.addNewMatchToDBGivenUsername(SessionData.getSignedInUser().getUsername(), currentMatch, matchMoves);
-                                            }
-
-
-                                            if (SessionData.easyModeSelected)
-                                            {
-                                                easyDifficultyBotTurn();
-                                            }
-                                            else
-                                            {
-                                                intermediateDifficultyBotTurn();
-                                            }
-                                        }
-                                    });
-
-                                }
-                                else
-                                {
-                                    bv.removeSelectionRing();
-                                    from = null;
-                                    to = null;
-                                    currentPiece = null;
-                                    canSelectMoveCell = false;
-                                    playerTurn = true;
-
+                                    }
                                 }
                             }
-                        }
-                        catch (NullPointerException np)
-                        {
-                            Log.d("Game: ", "error " + np);
-                        }
+                            catch (NullPointerException npe)
+                            {
+                                Log.d("Game: ", "error " + npe);
+                            }
 
 
+                        }
                     }
                 }
+                catch (NullPointerException np)
+                {
+                    Log.d("Game: ", "error " + np);
+                }
+
 
 
                 //logBoardForDebugging();
@@ -6660,9 +6747,10 @@ public class Game extends AppCompatActivity
                     {
                         if (!rightCellUpper.containsPiece())
                         {
-                            boolean isSafe = isMoveOrCaptureSafe(rightCellUpper, true, false, "Dark");
 
-                            if (!isSafe)
+                            boolean isSafe = isMoveOrCaptureSafe(leftCell.getPiece(), rightCellUpper, false, true, "Dark");
+
+                            if (isSafe)
                             {
                                 if (canCapturePiece(leftCell.getPiece(), rightCellUpper))
                                 {
@@ -6796,9 +6884,9 @@ public class Game extends AppCompatActivity
                         {
                             if (!leftCellUpper.containsPiece())
                             {
-                                boolean isSafe = isMoveOrCaptureSafe(leftCellUpper, true, false, "Dark");
+                                boolean isSafe = isMoveOrCaptureSafe(rightCell.getPiece(), leftCellUpper, false, true, "Dark");
 
-                                if (!isSafe)
+                                if (isSafe)
                                 {
                                     if (canCapturePiece(rightCell.getPiece(), leftCellUpper))
                                     {
@@ -6933,9 +7021,9 @@ public class Game extends AppCompatActivity
                         {
                             if (!rightCell.containsPiece())
                             {
-                                boolean isSafe = isMoveOrCaptureSafe(rightCell, true, false, "Dark");
+                                boolean isSafe = isMoveOrCaptureSafe(leftCellUpper.getPiece(), rightCell, false, true, "Dark");
 
-                                if (!isSafe)
+                                if (isSafe)
                                 {
                                     if (canCapturePiece(leftCellUpper.getPiece(), rightCell))
                                     {
@@ -7070,9 +7158,9 @@ public class Game extends AppCompatActivity
                         {
                             if (!leftCell.containsPiece())
                             {
-                                boolean isSafe = isMoveOrCaptureSafe(leftCell, true, false, "Dark");
+                                boolean isSafe = isMoveOrCaptureSafe(rightCellUpper.getPiece(), leftCell, false, true, "Dark");
 
-                                if (!isSafe)
+                                if (isSafe)
                                 {
                                     if (canCapturePiece(rightCellUpper.getPiece(), leftCell))
                                     {
