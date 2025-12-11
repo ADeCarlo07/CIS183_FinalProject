@@ -53,10 +53,14 @@ public class UpdateUser extends AppCompatActivity
 
     private void fillOutTextboxes()
     {
-        tv_j_username.setText("Update " + SessionData.getSignedInUser().getUsername());
-        et_j_fname.setText(SessionData.getSignedInUser().getFname());
-        et_j_lname.setText(SessionData.getSignedInUser().getLname());
-        et_j_email.setText(SessionData.getSignedInUser().getEmail());
+        if (SessionData.getSignedInUser() != null)
+        {
+            tv_j_username.setText("Update " + SessionData.getSignedInUser().getUsername());
+            et_j_fname.setText(SessionData.getSignedInUser().getFname());
+            et_j_lname.setText(SessionData.getSignedInUser().getLname());
+            et_j_email.setText(SessionData.getSignedInUser().getEmail());
+        }
+
     }
 
     private void buttonClickListeners()
@@ -82,17 +86,21 @@ public class UpdateUser extends AppCompatActivity
                 }
                 else
                 {
-                    User u = new User();
-                    u.setUsername(SessionData.getSignedInUser().getUsername());
-                    u.setFname(et_j_fname.getText().toString());
-                    u.setLname(et_j_lname.getText().toString());
-                    u.setEmail(et_j_email.getText().toString());
-                    dbHelper.updateUserData(u);
+                    if (SessionData.getSignedInUser() != null)
+                    {
+                        User u = new User();
+                        u.setUsername(SessionData.getSignedInUser().getUsername());
+                        u.setFname(et_j_fname.getText().toString());
+                        u.setLname(et_j_lname.getText().toString());
+                        u.setEmail(et_j_email.getText().toString());
+                        dbHelper.updateUserData(u);
 
-                    //Username wont change, update session data and get new data for the user
-                    SessionData.setSignedInUser(dbHelper.getAllUserDataGivenUsername(SessionData.getSignedInUser().getUsername()));
+                        //Username wont change, update session data and get new data for the user
+                        SessionData.setSignedInUser(dbHelper.getAllUserDataGivenUsername(SessionData.getSignedInUser().getUsername()));
 
-                    startActivity(new Intent(UpdateUser.this, Profile.class));
+                        startActivity(new Intent(UpdateUser.this, Profile.class));
+                    }
+
                 }
             }
         });

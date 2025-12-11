@@ -1,5 +1,6 @@
 package com.example.cis183_finalproject;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -48,11 +50,34 @@ public class HomePage extends AppCompatActivity
 
         welcomeMessage();
         buttonClickListener();
+
+        if (SessionData.getSignedInUser() == null)
+        {
+            //credits: https://stackoverflow.com/questions/26097513/android-simple-alert-dialog/26097588#26097588
+
+            AlertDialog alertDialog = new AlertDialog.Builder(HomePage.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("SYSTEM ERROR! No signed in user, press OK to go to Sign In page!");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.dismiss();
+                            startActivity(new Intent(HomePage.this, MainActivity.class));
+                        }
+                    });
+            alertDialog.show();
+        }
     }
 
     private void welcomeMessage()
     {
-        tv_j_welcome.setText("Welcome, " + SessionData.getSignedInUser().getUsername());
+        if (SessionData.getSignedInUser() != null)
+        {
+            tv_j_welcome.setText("Welcome, " + SessionData.getSignedInUser().getUsername());
+        }
+
     }
 
 

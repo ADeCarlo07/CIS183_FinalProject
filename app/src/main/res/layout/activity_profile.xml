@@ -173,7 +173,9 @@
         android:layout_height="240dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView16" />
+        app:layout_constraintTop_toBottomOf="@+id/textView16">
+
+    </ListView>
 
     <Button
         android:id="@+id/btn_v_profile_back"
@@ -215,5 +217,67 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lv_v_profile_matchHistory" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cons_v_profile_alert"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#66482B2E"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="invisible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="296dp"
+            android:layout_height="249dp"
+            android:background="#f7e8ca"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/textView25"
+                android:layout_width="231dp"
+                android:layout_height="42dp"
+                android:layout_marginTop="11dp"
+                android:text="Are you sure you want to delete your account?"
+                android:textAlignment="center"
+                android:textColor="#744E52"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btn_v_profile_yes"
+                android:layout_width="118dp"
+                android:layout_height="73dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#482B2E"
+                android:text="Yes"
+                android:textColor="#f7e8ca"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/btn_v_profile_no"
+                android:layout_width="118dp"
+                android:layout_height="73dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#482B2E"
+                android:text="No"
+                android:textColor="#f7e8ca"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

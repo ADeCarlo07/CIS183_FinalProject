@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         //change the version number
         //super is used to call the functionality of the base class SQLiteOpenHelper and
         //then executes the extended (DatabaseHelper)
-        super(c, database_name, null, 7);
+        super(c, database_name, null, 9);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
         //Create table in the database
         //execute the sql statement on the database that was passed to the function called db
         db.execSQL("CREATE TABLE " + users_table_name + " (username varchar(50) primary key not null, fname varchar(50), lname varchar(50), email varchar (50), numPoints int);");
-        db.execSQL("CREATE TABLE " + difficulties_table_name + " (difficultyId integer primary key autoincrement not null, pointsPerWin int, difficultyName varcar(50));");
+        db.execSQL("CREATE TABLE " + difficulties_table_name + " (difficultyId integer primary key autoincrement not null, pointsPerWin int, difficultyName varchar(50));");
         db.execSQL("CREATE TABLE " + matches_table_name + " (username varchar(50), matchId integer primary key autoincrement not null, result varchar(50), difficultyId int, time int, foreign key (username) references " + users_table_name + " (username), foreign key (difficultyId) references " + difficulties_table_name + " (difficultyId));");
         db.execSQL("CREATE TABLE " + moves_table_name + " (moveId integer primary key autoincrement not null, matchId int, turnNumber int, toSquareRowU int, toSquareColU int, fromSquareRowU int, fromSquareColU int, toSquareRowB int, toSquareColB int, fromSquareRowB int, fromSquareColB int, foreign key (matchId) references " + matches_table_name + " (matchId))");
 
@@ -378,12 +378,14 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         Cursor cursor = db.rawQuery(getAverageTime, null);
 
-        if (cursor != null) {
+        if (cursor != null)
+        {
             cursor.moveToFirst();
             averageTime = cursor.getInt(0);
         }
 
-        if (cursor != null) {
+        if (cursor != null)
+        {
             cursor.close();
         }
         db.close();
@@ -514,14 +516,41 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
     public void deleteUserGivenUsername(String username)
     {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String deleteStatement = "DELETE FROM " + users_table_name + " WHERE username = '" + username + "';";
-        db.execSQL(deleteStatement);
-        db.close();
+        boolean usernameExists = isUsernameValid(username);
+
+        if (usernameExists)
+        {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String deleteStatement = "DELETE FROM " + users_table_name + " WHERE username = '" + username + "';";
+            db.execSQL(deleteStatement);
+            db.close();
+
+            ArrayList<Match> matches = new ArrayList<>();
+            matches = getAllMatchesGivenUsername(username);
+
+            for (Match m : matches)
+            {
+                SQLiteDatabase db02 = this.getWritableDatabase();
+                int id = m.getId();
+                String moveDeleteStatement = "DELETE FROM " + moves_table_name + " WHERE matchId =" + id + ";";
+                db02.execSQL(moveDeleteStatement);
+                db02.close();
+
+                SQLiteDatabase db01 = this.getWritableDatabase();
+                String matchDeleteStatement = "DELETE FROM " + matches_table_name + " WHERE username ='" + username + "';";
+                db01.execSQL(matchDeleteStatement);
+                db01.close();
+
+            }
+
+
+        }
+
     }
 
     public void addNewMatchToDBGivenUsername(String username, Match match, ArrayList<Move> moves)
     {
+        boolean usernameExists = isUsernameValid(username);
 
         SQLiteDatabase db = this.getWritableDatabase();
         String createStatement = "INSERT INTO " + matches_table_name + " (username, result, difficultyId, time) VALUES('" + username + "', '" + match.getResult() + "', " + match.getDifficultyId() + ", " + match.getTime() + ");";
@@ -530,7 +559,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         //get last inserted row id
         Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
+
         cursor.moveToFirst();
+
         int curMatchId = cursor.getInt(0);
         cursor.close();
 

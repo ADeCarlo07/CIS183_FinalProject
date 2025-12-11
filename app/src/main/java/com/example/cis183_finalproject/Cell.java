@@ -16,10 +16,22 @@ public class Cell
         isDark = d;
         piece = null;
     }
-    public int getRow() { return row; }
-    public int getCol() { return col; }
-    public boolean isDark() { return isDark; }
-    public Piece getPiece() { return piece; }
+    public int getRow()
+    {
+        return row;
+    }
+    public int getCol()
+    {
+        return col;
+    }
+    public boolean isDark()
+    {
+        return isDark;
+    }
+    public Piece getPiece()
+    {
+        return piece;
+    }
 
     public void placePiece(Piece p)
     {

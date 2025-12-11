@@ -59,9 +59,11 @@ public class LeaderboardListAdapter extends BaseAdapter
         tv_j_rank = view.findViewById(R.id.tv_v_leaderboard_cell_rank);
         tv_j_numPoints = view.findViewById(R.id.tv_v_leaderboard_cell_totalPoints);
 
+        view.setBackgroundColor(Color.parseColor("#744E52"));
+
         int rank = position + 1;
 
-        if (position % 2 != 0)
+        if (position % 2 == 0)
         {
             view.setBackgroundColor(Color.parseColor("#482B2E"));
         }

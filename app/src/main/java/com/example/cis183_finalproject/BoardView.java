@@ -36,9 +36,18 @@ public class BoardView extends View
     int selectedCol;
     int selectedRow;
 
-    public float getCellSide() { return cellSide; }
-    public float getOriginX()  { return originX; }
-    public float getOriginY()  { return originY; }
+    public float getCellSide()
+    {
+        return cellSide;
+    }
+    public float getOriginX()
+    {
+        return originX;
+    }
+    public float getOriginY()
+    {
+        return originY;
+    }
 
     public BoardView(Context context, AttributeSet attrs)
     {

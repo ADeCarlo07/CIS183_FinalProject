@@ -3,6 +3,7 @@ package com.example.cis183_finalproject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
@@ -138,9 +140,34 @@ public class Game extends AppCompatActivity
         btn_j_quit = findViewById(R.id.btn_v_game_quit);
         btn_j_retry = findViewById(R.id.btn_v_game_retry);
 
+
+        if (SessionData.getSignedInUser() == null)
+        {
+            //credits: https://stackoverflow.com/questions/26097513/android-simple-alert-dialog/26097588#26097588
+
+            AlertDialog alertDialog = new AlertDialog.Builder(Game.this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("SYSTEM ERROR! No signed in user, press OK to go to Sign In page!");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.dismiss();
+                            startActivity(new Intent(Game.this, MainActivity.class));
+                        }
+                    });
+            alertDialog.show();
+        }
+
+
         onSelectedPiece();
 
-        tv_j_username.setText(SessionData.getSignedInUser().getUsername());
+        if (SessionData.getSignedInUser() != null)
+        {
+            tv_j_username.setText(SessionData.getSignedInUser().getUsername());
+        }
+
 
         buttonClickListener();
 
@@ -1026,7 +1053,7 @@ public class Game extends AppCompatActivity
             if (piece.isCrowned())
             {
 
-                if (rightCellUpper != null && rightCellUpper.containsPiece() && !rightCellUpper.getPiece().getColor().equals(color))
+                if (rightCellUpper != null && rightCellUpper.containsPiece() && !rightCellUpper.getPiece().getColor().equals(color) && rightCellUpper.getPiece().isCrowned())
                 {
 
                     if (leftCell != null && !leftCell.containsPiece())
@@ -1037,7 +1064,7 @@ public class Game extends AppCompatActivity
                 }
 
 
-                if (leftCellUpper != null && leftCellUpper.containsPiece() && !leftCellUpper.getPiece().getColor().equals(color))
+                if (leftCellUpper != null && leftCellUpper.containsPiece() && !leftCellUpper.getPiece().getColor().equals(color) && leftCellUpper.getPiece().isCrowned())
                 {
 
                     if (rightCell != null && !rightCell.containsPiece())
@@ -1208,9 +1235,10 @@ public class Game extends AppCompatActivity
 
                 currentMove = new Move();
 
+                turnCounter++;
+
                 tv_j_userTurn.setVisibility(View.VISIBLE);
 
-                turnCounter++;
                 playerTurn = true;
                 botTurn = false;
 
@@ -1335,13 +1363,7 @@ public class Game extends AppCompatActivity
                 if (!botPiece.isCrowned())
                 {
 
-                    tryToCrown(botPiece);
 
-                    if (moveMade)
-                    {
-                        moveMade = false;
-                        return;
-                    }
 
                     //LOWER
                     //2 rows and 2 cols away
@@ -1768,9 +1790,10 @@ public class Game extends AppCompatActivity
 
                                     currentMove = new Move();
 
+                                    turnCounter++;
+
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
-                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
 
@@ -1876,7 +1899,6 @@ public class Game extends AppCompatActivity
                                         currentMove.setToSquareColB(finalRightCellCapture.getCol());
                                         currentMove.setTurnNumber(turnCounter);
                                         matchMoves.add(currentMove);
-
                                         int uFrom = getSquareNumber(currentMove.getFromSquareRowU(), currentMove.getFromSquareColU());
                                         int uTo = getSquareNumber(currentMove.getToSquareRowU(), currentMove.getToSquareColU());
                                         int bFrom = getSquareNumber(currentMove.getFromSquareRowB(), currentMove.getFromSquareColB());
@@ -1889,9 +1911,11 @@ public class Game extends AppCompatActivity
 
                                         currentMove = new Move();
 
+                                        turnCounter++;
+
                                         tv_j_userTurn.setVisibility(View.VISIBLE);
 
-                                        turnCounter++;
+
                                         playerTurn = true;
                                         botTurn = false;
 
@@ -1971,6 +1995,8 @@ public class Game extends AppCompatActivity
                                 currentMove = new Move();
 
                                 turnCounter++;
+
+
 
                                 Cell finalRightCell = rightCell;
                                 botPiece.objectMoveAnimator.addListener(new AnimatorListenerAdapter()
@@ -2260,9 +2286,10 @@ public class Game extends AppCompatActivity
 
                                     currentMove = new Move();
 
+                                    turnCounter++;
+
                                     tv_j_userTurn.setVisibility(View.VISIBLE);
 
-                                    turnCounter++;
                                     playerTurn = true;
                                     botTurn = false;
 
@@ -6173,6 +6200,8 @@ public class Game extends AppCompatActivity
 
 
             }
+
+
 
             botWon = true;
             tv_j_result.setText("Lost");

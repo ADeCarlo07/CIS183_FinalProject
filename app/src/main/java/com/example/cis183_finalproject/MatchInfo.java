@@ -53,21 +53,29 @@ public class MatchInfo extends AppCompatActivity
     }
     private void fillOutMovesList()
     {
-        listOfMoves = dbHelper.getAllMovesGivenMatchId(SessionData.getSelectedMatch().getId());
+        if (SessionData.getSelectedMatch() != null)
+        {
+            listOfMoves = dbHelper.getAllMovesGivenMatchId(SessionData.getSelectedMatch().getId());
 
-        movesListAdapter = new MovesListAdapter(this, listOfMoves);
-        lv_j_moves.setAdapter(movesListAdapter);
+            movesListAdapter = new MovesListAdapter(this, listOfMoves);
+            lv_j_moves.setAdapter(movesListAdapter);
+        }
+
     }
     private void fillOutTextboxes()
     {
-        dbHelper.setAllMatchDataGivenId(SessionData.getSelectedMatch().getId());
+        if (SessionData.getSelectedMatch() != null)
+        {
+            dbHelper.setAllMatchDataGivenId(SessionData.getSelectedMatch().getId());
 
-        tv_j_result.setText(SessionData.getSelectedMatch().getResult());
+            tv_j_result.setText(SessionData.getSelectedMatch().getResult());
 
-        String difficultyName = dbHelper.getDifficultyNameGivenId(SessionData.getSelectedMatch().getDifficultyId());
-        tv_j_difficulty.setText(difficultyName);
+            String difficultyName = dbHelper.getDifficultyNameGivenId(SessionData.getSelectedMatch().getDifficultyId());
+            tv_j_difficulty.setText(difficultyName);
 
-        tv_j_time.setText(String.valueOf(SessionData.getSelectedMatch().getTime()));
+            tv_j_time.setText(String.valueOf(SessionData.getSelectedMatch().getTime()));
+        }
+
     }
 
     private void buttonClickListener()
